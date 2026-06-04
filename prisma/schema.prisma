@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contents  PageContent[]
+  banners   Banner[]
+}
+
+model PageContent {
+  id          String   @id @default(cuid())
+  pageId      String
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  language    String   // "zh" or "en"
+  title       String?
+  content     String?  // Rich text JSON
+  bannerImages String[] // Array of image URLs
+  metaDescription String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([pageId, language])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  titleZh   String?
+  titleEn   String?
+  bioZh     String?
+  bioEn     String?
+  photoUrl  String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  type        String   // "news" or "case"
+  language    String   // "zh" or "en"
+  title       String
+  summary     String?
+  content     String?  // Rich text JSON
+  author      String?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type, language])
+  @@index([language])
+}
+
+model SiteConfig {
+  id        String   @id @default(cuid())
+  key       String
+  value     String?
+  language  String?  // null means language-independent
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, language])
+}
+
+model Banner {
+  id          String   @id @default(cuid())
+  pageId      String
+  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  imageUrl    String
+  overlayTextZh String?
+  overlayTextEn String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([pageId, sortOrder])
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
