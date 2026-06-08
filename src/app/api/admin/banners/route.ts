@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const banners = await prisma.banner.findMany({
-      include: { page: true },
       orderBy: { sortOrder: 'asc' },
     })
     return NextResponse.json(banners)
@@ -21,18 +20,8 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
 
-    // Get page by slug
-    const page = await prisma.page.findUnique({
-      where: { slug: data.pageSlug || 'home' },
-    })
-
-    if (!page) {
-      return NextResponse.json({ error: 'Page not found' }, { status: 404 })
-    }
-
     const banner = await prisma.banner.create({
       data: {
-        pageId: page.id,
         imageUrl: data.imageUrl,
         overlayTextZh: data.overlayTextZh,
         overlayTextEn: data.overlayTextEn,

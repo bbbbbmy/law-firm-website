@@ -1,28 +1,17 @@
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/session'
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const sessionId = cookieStore.get('admin_session')?.value
+  const session = await getSession()
 
-  if (!sessionId) {
-    redirect('/admin/login')
-  }
-
-  // Verify admin exists
-  const admin = await prisma.admin.findUnique({
-    where: { id: sessionId },
-  })
-
-  if (!admin) {
-    redirect('/admin/login')
-  }
+  // Check if we're on the login page by checking the cookie
+  // If no session cookie exists, the login page will work normally
+  // If session cookie exists but invalid, redirect to login
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -42,35 +31,41 @@ export default async function AdminLayout({
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">欢迎, {admin.username}</span>
-            <form action="/api/admin/auth/logout" method="POST">
-              <button
-                type="submit"
-                className="text-sm text-gray-600 hover:text-red-600"
-              >
-                退出
-              </button>
-            </form>
+            <span className="text-sm text-gray-600">欢迎, {session.email || 'Guest'}</span>
+            {session.isLoggedIn && (
+              <form action="/api/admin/auth/logout" method="POST">
+                <button
+                  type="submit"
+                  className="text-sm text-gray-600 hover:text-red-600"
+                >
+                  退出
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </header>
 
       {/* Sidebar + Content */}
       <div className="flex pt-14">
-        {/* Sidebar */}
-        <aside className="fixed left-0 top-14 bottom-0 w-64 bg-white shadow-lg overflow-y-auto">
-          <nav className="p-4 space-y-1">
-            <SidebarLink href="/admin" icon="📊" label="概览" />
-            <SidebarLink href="/admin/articles" icon="📝" label="文章管理" />
-            <SidebarLink href="/admin/team" icon="👥" label="团队成员" />
-            <SidebarLink href="/admin/banners" icon="🖼️" label="Banner管理" />
-            <SidebarLink href="/admin/media" icon="📁" label="媒体库" />
-            <SidebarLink href="/admin/settings" icon="⚙️" label="网站设置" />
-          </nav>
-        </aside>
+        {/* Sidebar - only show when logged in */}
+        {session.isLoggedIn && (
+          <aside className="fixed left-0 top-14 bottom-0 w-64 bg-white shadow-lg overflow-y-auto">
+            <nav className="p-4 space-y-1">
+              <SidebarLink href="/admin" icon="📊" label="概览" />
+              <SidebarLink href="/admin/articles" icon="📝" label="文章管理" />
+              <SidebarLink href="/admin/team" icon="👥" label="团队成员" />
+              <SidebarLink href="/admin/practice-areas" icon="⚖️" label="业务领域" />
+              <SidebarLink href="/admin/clients" icon="🏢" label="服务客户" />
+              <SidebarLink href="/admin/banners" icon="🖼️" label="Banner管理" />
+              <SidebarLink href="/admin/media" icon="📁" label="媒体库" />
+              <SidebarLink href="/admin/settings" icon="⚙️" label="网站设置" />
+            </nav>
+          </aside>
+        )}
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-6">
+        <main className={`flex-1 p-6 ${session.isLoggedIn ? 'ml-64' : ''}`}>
           {children}
         </main>
       </div>

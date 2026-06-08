@@ -1,0 +1,30 @@
+import { getIronSession, type IronSession, type SessionOptions } from 'iron-session'
+import { cookies } from 'next/headers'
+
+export interface AdminSession {
+  adminId: string
+  email: string
+  isLoggedIn: boolean
+}
+
+export const sessionOptions: SessionOptions = {
+  password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters_long',
+  cookieName: 'law-firm-admin-session',
+  cookieOptions: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+  },
+}
+
+export const defaultSession: AdminSession = {
+  adminId: '',
+  email: '',
+  isLoggedIn: false,
+}
+
+export async function getSession(): Promise<IronSession<AdminSession>> {
+  const session = await getIronSession<AdminSession>(cookies(), sessionOptions)
+  return session
+}

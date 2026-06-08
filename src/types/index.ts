@@ -55,6 +55,24 @@ export interface BannerData {
   sortOrder: number
 }
 
+export interface PracticeAreaData {
+  id: string
+  imageUrl: string
+  titleZh: string
+  titleEn: string
+  descZh: string | null
+  descEn: string | null
+  sortOrder: number
+}
+
+export interface ClientData {
+  id: string
+  name: string
+  logoUrl: string | null
+  website: string | null
+  sortOrder: number
+}
+
 export interface NavigationItem {
   label: string
   labelEn: string

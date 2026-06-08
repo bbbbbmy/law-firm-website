@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { NAV_ITEMS, type Language } from '@/types'
 
 interface HeaderProps {
@@ -12,7 +13,9 @@ interface HeaderProps {
 
 export default function Header({ lang, logoUrl, firmName = '律师事务所' }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const router = useRouter()
 
   const otherLang = lang === 'zh' ? 'en' : 'zh'
   const langLabel = lang === 'zh' ? '中' : 'EN'
@@ -21,6 +24,15 @@ export default function Header({ lang, logoUrl, firmName = '律师事务所' }: 
   const getLocalizedHref = (href: string) => {
     if (href === '/') return `/${otherLang}`
     return `/${otherLang}${href}`
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/${lang}/news?search=${encodeURIComponent(searchQuery.trim())}`)
+      setIsSearchOpen(false)
+      setSearchQuery('')
+    }
   }
 
   return (
@@ -57,15 +69,18 @@ export default function Header({ lang, logoUrl, firmName = '律师事务所' }: 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
             {/* Language Switcher */}
-            <button
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+            <Link
+              href={getLocalizedHref('/')}
               className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
             >
               {langLabel} | {otherLangLabel}
-            </button>
+            </Link>
 
             {/* Search Icon */}
-            <button className="text-gray-700 hover:text-primary-600 transition-colors">
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="text-gray-700 hover:text-primary-600 transition-colors"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -108,6 +123,37 @@ export default function Header({ lang, logoUrl, firmName = '律师事务所' }: 
               {lang === 'zh' ? '切换到英文' : 'Switch to Chinese'}
             </Link>
           </nav>
+        )}
+
+        {/* Search Modal */}
+        {isSearchOpen && (
+          <div className="absolute top-full left-0 right-0 bg-white shadow-lg border-t">
+            <div className="max-w-2xl mx-auto px-4 py-4">
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={lang === 'zh' ? '搜索文章...' : 'Search articles...'}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700"
+                >
+                  {lang === 'zh' ? '搜索' : 'Search'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  className="px-4 py-2 text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </form>
+            </div>
+          </div>
         )}
       </div>
     </header>

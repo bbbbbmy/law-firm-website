@@ -6,28 +6,50 @@ datasource db {
   provider = "postgresql"
 }
 
-model Page {
+enum Language {
+  zh
+  en
+}
+
+enum ArticleType {
+  news
+  case
+}
+
+model Admin {
   id        String   @id @default(cuid())
-  slug      String   @unique
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Page {
+  id        String        @id @default(cuid())
+  slug      String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   contents  PageContent[]
-  banners   Banner[]
+
+  @@map("pages")
 }
 
 model PageContent {
-  id          String   @id @default(cuid())
-  pageId      String
-  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  language    String   // "zh" or "en"
-  title       String?
-  content     String?  // Rich text JSON
-  bannerImages String[] // Array of image URLs
+  id              String   @id @default(cuid())
+  pageId          String
+  language        Language
+  title           String?
+  content         String?  // Rich text as JSON string
+  bannerImages    String[]
   metaDescription String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  page            Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@unique([pageId, language])
+  @@map("page_contents")
 }
 
 model TeamMember {
@@ -41,54 +63,72 @@ model TeamMember {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("team_members")
 }
 
 model Article {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  type        String   // "news" or "case"
-  language    String   // "zh" or "en"
+  id          String      @id @default(cuid())
+  slug        String
+  type        ArticleType
+  language    Language
   title       String
   summary     String?
-  content     String?  // Rich text JSON
+  content     String?     // Rich text as JSON string
   author      String?
   publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  @@index([type, language])
-  @@index([language])
-}
-
-model SiteConfig {
-  id        String   @id @default(cuid())
-  key       String
-  value     String?
-  language  String?  // null means language-independent
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([key, language])
+  @@unique([slug, language])
+  @@map("articles")
 }
 
 model Banner {
-  id          String   @id @default(cuid())
-  pageId      String
-  page        Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  imageUrl    String
-  overlayTextZh String?
-  overlayTextEn String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  imageUrl       String
+  overlayTextZh  String?
+  overlayTextEn  String?
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  @@index([pageId, sortOrder])
+  @@map("banners")
 }
 
-model Admin {
+model SiteConfig {
+  id        String    @id @default(cuid())
+  key       String    @unique
+  value     String?
+  language  Language?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("site_configs")
+}
+
+model PracticeArea {
   id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
+  imageUrl  String
+  titleZh   String
+  titleEn   String
+  descZh    String?
+  descEn    String?
+  sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("practice_areas")
+}
+
+model Client {
+  id        String  @id @default(cuid())
+  name      String
+  logoUrl   String?
+  website   String?
+  sortOrder Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("clients")
 }

@@ -1,33 +1,31 @@
-// Simplified Prisma client for development
-// Note: Database needs to be running for full functionality
+import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
-export const prisma = {
-  admin: {
-    findUnique: async () => null,
-    findMany: async () => [],
-  },
-  article: {
-    findMany: async () => [],
-    count: async () => 0,
-  },
-  teamMember: {
-    findMany: async () => [],
-    count: async () => 0,
-  },
-  banner: {
-    findMany: async () => [],
-    count: async () => 0,
-  },
-  page: {
-    findUnique: async () => null,
-    findMany: async () => [],
-  },
-  pageContent: {
-    findUnique: async () => null,
-    findMany: async () => [],
-  },
-  siteConfig: {
-    findMany: async () => [],
-  },
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as unknown as any
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+  pool: Pool | undefined
+}
+
+function createPrismaClient() {
+  const connectionString = process.env.DATABASE_URL
+
+  if (!connectionString) {
+    throw new Error('DATABASE_URL environment variable is not set')
+  }
+
+  const pool = globalForPrisma.pool ?? new Pool({ connectionString })
+  const adapter = new PrismaPg(pool)
+
+  if (process.env.NODE_ENV !== 'production') {
+    globalForPrisma.pool = pool
+  }
+
+  return new PrismaClient({ adapter })
+}
+
+export const prisma = globalForPrisma.prisma ?? createPrismaClient()
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
+}

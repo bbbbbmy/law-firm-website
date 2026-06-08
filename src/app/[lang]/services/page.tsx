@@ -152,7 +152,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           articles={langCases}
           lang={lang as "zh" | "en"}
           title={lang === 'zh' ? '相关案例' : 'Related Cases'}
-          viewMoreHref="/cases"
+          viewMoreHref={`/${lang}/cases`}
         />
       </section>
     </PageLayout>
