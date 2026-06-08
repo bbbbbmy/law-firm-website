@@ -18,7 +18,7 @@ interface FooterProps {
 export default function Footer({
   lang,
   logoUrl,
-  firmName = '律师事务所',
+  firmName = '江苏德善(新沂)律师事务所',
   qrCodeUrl,
   contactInfo = {},
   copyright,

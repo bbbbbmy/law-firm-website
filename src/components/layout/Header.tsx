@@ -11,7 +11,7 @@ interface HeaderProps {
   firmName?: string
 }
 
-export default function Header({ lang, logoUrl, firmName = '律师事务所' }: HeaderProps) {
+export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)律师事务所' }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')

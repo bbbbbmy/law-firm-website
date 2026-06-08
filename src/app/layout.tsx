@@ -14,8 +14,8 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: "律师事务所",
-  description: "专业律师事务所官方网站",
+  title: "江苏德善(新沂)律师事务所",
+  description: "江苏德善(新沂)律师事务所官方网站",
 }
 
 export default function RootLayout({

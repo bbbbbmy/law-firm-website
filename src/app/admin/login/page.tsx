@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
   return (
     <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">律师事务所管理后台</h1>
+        <h1 className="text-2xl font-bold text-gray-900">江苏德善(新沂)律师事务所管理后台</h1>
         <p className="text-gray-600 mt-2">Law Firm Admin</p>
       </div>
 
