@@ -77,6 +77,90 @@ async function main() {
   }
   console.log('Created team members:', teamMembers.length)
 
+  // Create sample practice areas
+  const practiceAreas = [
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800',
+      titleZh: '民商事纠纷',
+      titleEn: 'Civil Disputes',
+      descZh: '民事诉讼、合同纠纷、公司业务',
+      descEn: 'Litigation, Contract, Corporate',
+      sortOrder: 0,
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1589391886645-d51941baf7fb?w=800',
+      titleZh: '刑事辩护',
+      titleEn: 'Criminal Defense',
+      descZh: '刑事辩护、取保候审',
+      descEn: 'Defense, Bail',
+      sortOrder: 1,
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800',
+      titleZh: '行政纠纷',
+      titleEn: 'Administrative Disputes',
+      descZh: '行政复议、行政诉讼',
+      descEn: 'Admin Litigation',
+      sortOrder: 2,
+    },
+    {
+      imageUrl: 'https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=800',
+      titleZh: '涉外纠纷',
+      titleEn: 'Foreign-Related',
+      descZh: '国际贸易、跨境投资',
+      descEn: 'Intl Trade, Investment',
+      sortOrder: 3,
+    },
+  ]
+  for (const area of practiceAreas) {
+    await prisma.practiceArea.create({ data: area })
+  }
+  console.log('Created practice areas:', practiceAreas.length)
+
+  // Create sample clients
+  const clients = [
+    {
+      name: '阿里巴巴',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=Alibaba',
+      website: 'https://www.alibaba.com',
+      sortOrder: 0,
+    },
+    {
+      name: '腾讯',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=Tencent',
+      website: 'https://www.tencent.com',
+      sortOrder: 1,
+    },
+    {
+      name: '华为',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=Huawei',
+      website: 'https://www.huawei.com',
+      sortOrder: 2,
+    },
+    {
+      name: '京东',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=JD',
+      website: 'https://www.jd.com',
+      sortOrder: 3,
+    },
+    {
+      name: '百度',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=Baidu',
+      website: 'https://www.baidu.com',
+      sortOrder: 4,
+    },
+    {
+      name: '小米',
+      logoUrl: 'https://via.placeholder.com/200x100.png?text=Xiaomi',
+      website: 'https://www.xiaomi.com',
+      sortOrder: 5,
+    },
+  ]
+  for (const client of clients) {
+    await prisma.client.create({ data: client })
+  }
+  console.log('Created clients:', clients.length)
+
   // Create sample articles
   const articles = [
     {
@@ -99,7 +183,11 @@ async function main() {
     },
   ]
   for (const article of articles) {
-    await prisma.article.create({ data: article })
+    await prisma.article.upsert({
+      where: { slug_language: { slug: article.slug, language: article.language } },
+      update: {},
+      create: article,
+    })
   }
   console.log('Created articles:', articles.length)
 
