@@ -53,7 +53,7 @@ export default function TeamGrid({ members, lang, title }: TeamGridProps) {
                 </div>
 
                 <Link
-                  href={`/${lang}/team/${member.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`/${lang}/team/${encodeURIComponent(member.name)}`}
                   className="text-gray-400 hover:text-primary-600 text-sm mt-4 inline-block"
                 >
                   {lang === 'zh' ? '查看详情 →' : 'View Details →'}
