@@ -75,8 +75,8 @@ export default function ArticleFormClient({ initialData, mode }: ArticleFormClie
 
       router.push('/admin/articles')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存失败')
     } finally {
       setLoading(false)
     }

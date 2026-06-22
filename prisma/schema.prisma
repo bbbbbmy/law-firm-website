@@ -68,17 +68,18 @@ model TeamMember {
 }
 
 model Article {
-  id          String      @id @default(cuid())
-  slug        String
-  type        ArticleType
-  language    Language
-  title       String
-  summary     String?
-  content     String?     // Rich text as JSON string
-  author      String?
-  publishedAt DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id           String      @id @default(cuid())
+  slug         String
+  type         ArticleType
+  language     Language
+  title        String
+  summary      String?
+  content      String?     // Rich text as JSON string
+  coverImageUrl String?    // Cover image URL for article listing
+  author       String?
+  publishedAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@unique([slug, language])
   @@map("articles")
@@ -108,15 +109,16 @@ model SiteConfig {
 }
 
 model PracticeArea {
-  id        String   @id @default(cuid())
-  imageUrl  String
-  titleZh   String
-  titleEn   String
-  descZh    String?
-  descEn    String?
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  imageUrl    String
+  titleZh     String
+  titleEn     String
+  descZh      String?
+  descEn      String?
+  articleSlug String?  // Link to an article (case type)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("practice_areas")
 }

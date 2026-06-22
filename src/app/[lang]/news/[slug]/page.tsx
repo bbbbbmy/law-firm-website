@@ -8,8 +8,9 @@ interface ArticlePageProps {
 }
 
 export default async function NewsArticlePage({ params }: ArticlePageProps) {
-  const { lang, slug } = await params
+  const { lang, slug: encodedSlug } = await params
   const language = lang as Language
+  const slug = decodeURIComponent(encodedSlug)
 
   const article = await prisma.article.findFirst({
     where: {
@@ -27,6 +28,17 @@ export default async function NewsArticlePage({ params }: ArticlePageProps) {
     <PageLayout lang={language}>
       <article className="py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Cover Image */}
+          {article.coverImageUrl && (
+            <div className="mb-8 rounded-lg overflow-hidden">
+              <img
+                src={article.coverImageUrl}
+                alt={article.title}
+                className="w-full h-64 object-cover"
+              />
+            </div>
+          )}
+
           <header className="mb-8">
             <div className="text-sm text-gray-500 mb-2">
               {lang === 'zh' ? '资讯' : 'News'}
@@ -68,7 +80,7 @@ export default async function NewsArticlePage({ params }: ArticlePageProps) {
           <div className="mt-16 pt-8 border-t">
             <a
               href={`/${lang}/news`}
-              className="text-primary-600 hover:text-primary-700"
+              className="text-gold-600 hover:text-gold-700"
             >
               ← {lang === 'zh' ? '返回资讯列表' : 'Back to News'}
             </a>

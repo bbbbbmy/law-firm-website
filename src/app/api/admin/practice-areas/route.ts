@@ -27,6 +27,7 @@ export async function POST(request: Request) {
         titleEn: data.titleEn,
         descZh: data.descZh,
         descEn: data.descEn,
+        articleSlug: data.articleSlug ?? null,
         sortOrder: data.sortOrder ?? 0,
       },
     })

@@ -1,5 +1,5 @@
-import ArticleFormClient from '@/components/admin/ArticleFormClient'
+import BilingualArticleForm from '@/components/admin/BilingualArticleForm'
 
 export default async function NewArticlePage() {
-  return <ArticleFormClient mode="new" />
+  return <BilingualArticleForm mode="new" />
 }

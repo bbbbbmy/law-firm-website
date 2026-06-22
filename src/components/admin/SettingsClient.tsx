@@ -79,7 +79,7 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
 
       setMessage('基本信息保存成功')
       router.refresh()
-    } catch (error) {
+    } catch {
       setMessage('保存失败')
     } finally {
       setLoading(false)
@@ -120,7 +120,7 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
 
       setMessage('关于我们设置保存成功')
       router.refresh()
-    } catch (error) {
+    } catch {
       setMessage('保存失败')
     } finally {
       setLoading(false)

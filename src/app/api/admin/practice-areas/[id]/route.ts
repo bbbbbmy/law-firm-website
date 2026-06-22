@@ -42,6 +42,7 @@ export async function PUT(
         titleEn: data.titleEn,
         descZh: data.descZh,
         descEn: data.descEn,
+        articleSlug: data.articleSlug ?? null,
         sortOrder: data.sortOrder ?? 0,
       },
     })

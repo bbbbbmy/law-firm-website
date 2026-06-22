@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get('type')
+
+    const where = type ? { type: type as 'news' | 'case' } : {}
+
     const articles = await prisma.article.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
     })
     return NextResponse.json(articles)

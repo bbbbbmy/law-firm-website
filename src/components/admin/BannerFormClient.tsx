@@ -58,8 +58,8 @@ export default function BannerFormClient({ initialData, mode }: BannerFormClient
 
       router.push('/admin/banners')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存失败')
     } finally {
       setLoading(false)
     }

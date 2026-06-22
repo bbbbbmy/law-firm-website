@@ -34,6 +34,7 @@ export default async function CasesPage({ params }: CasesPageProps) {
           title: a.title,
           summary: a.summary,
           content: a.content,
+          coverImageUrl: a.coverImageUrl,
           author: a.author,
           publishedAt: a.publishedAt,
         }))}

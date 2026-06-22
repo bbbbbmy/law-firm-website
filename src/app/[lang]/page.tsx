@@ -56,23 +56,42 @@ export default async function HomePage({ params }: HomePageProps) {
       <BannerCarousel banners={banners} lang={language} />
 
       {/* Firm Introduction - Dynamic from SiteConfig */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div className="relative">
               <img
                 src={aboutImage}
                 alt="Law Firm"
-                className="rounded-lg shadow-lg"
+                className="rounded-lg shadow-xl w-full"
               />
+              {/* Gold accent frame */}
+              <div className="absolute -bottom-4 -right-4 w-full h-full border-2 border-gold-400 rounded-lg -z-10" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <div className="w-12 h-1 bg-gold-500 mb-6" />
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-900 mb-6">
                 {aboutTitle}
               </h2>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+              <p className="text-navy-600 leading-relaxed whitespace-pre-line text-lg">
                 {aboutContent}
               </p>
+              <div className="mt-8 flex items-center space-x-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gold-600">20+</div>
+                  <div className="text-sm text-navy-500">{language === 'zh' ? '年经验' : 'Years Experience'}</div>
+                </div>
+                <div className="w-px h-12 bg-gray-200" />
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gold-600">1000+</div>
+                  <div className="text-sm text-navy-500">{language === 'zh' ? '成功案例' : 'Cases Won'}</div>
+                </div>
+                <div className="w-px h-12 bg-gray-200" />
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gold-600">50+</div>
+                  <div className="text-sm text-navy-500">{language === 'zh' ? '专业律师' : 'Expert Lawyers'}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -88,40 +107,65 @@ export default async function HomePage({ params }: HomePageProps) {
           title: a.title,
           summary: a.summary,
           content: a.content,
+          coverImageUrl: a.coverImageUrl,
           author: a.author,
           publishedAt: a.publishedAt,
         }))}
         lang={language}
         title={language === 'zh' ? '资讯动态' : 'News'}
-        viewMoreHref={`/${lang}/news`}
+        viewMoreHref="/news"
       />
 
       {/* Business Areas - Dynamic from database */}
-      <section className="py-16 bg-gray-900 text-white">
+      <section className="py-16 bg-navy-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold mb-8 text-center">
-            {language === 'zh' ? '业务领域' : 'Practice Areas'}
-          </h2>
+          <div className="text-center mb-12">
+            <div className="w-12 h-1 bg-gold-500 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-white mb-2">
+              {language === 'zh' ? '业务领域' : 'Practice Areas'}
+            </h2>
+            <p className="text-navy-300 max-w-2xl mx-auto">
+              {language === 'zh'
+                ? '我们提供全方位的法律服务，覆盖多个专业领域'
+                : 'We provide comprehensive legal services across multiple practice areas'}
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {practiceAreas.length === 0 ? (
-              <p className="col-span-full text-center text-gray-400">
+              <p className="col-span-full text-center text-navy-400">
                 {language === 'zh' ? '暂无业务领域' : 'No practice areas available'}
               </p>
             ) : (
-              practiceAreas.map((area) => (
-                <div key={area.id} className="relative rounded-lg overflow-hidden h-48">
-                  <img
-                    src={area.imageUrl}
-                    alt={area.titleZh}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <p className="text-white text-center font-medium whitespace-pre-line">
-                      {language === 'zh' ? `${area.titleZh}\n${area.descZh || ''}` : `${area.titleEn}\n${area.descEn || ''}`}
-                    </p>
-                  </div>
-                </div>
-              ))
+              practiceAreas.map((area) => {
+                const href = area.articleSlug
+                  ? `/${lang}/cases/${area.articleSlug}`
+                  : `/${lang}/services`
+                return (
+                  <a
+                    key={area.id}
+                    href={href}
+                    className="group relative rounded-lg overflow-hidden h-48 block cursor-pointer"
+                  >
+                    <img
+                      src={area.imageUrl}
+                      alt={area.titleZh}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/70 to-transparent" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                      <div className="w-8 h-0.5 bg-gold-500 mb-3" />
+                      <p className="text-white font-semibold whitespace-pre-line">
+                        {language === 'zh' ? area.titleZh : area.titleEn}
+                      </p>
+                      {area.articleSlug && (
+                        <span className="text-gold-400 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {language === 'zh' ? '点击查看详情 →' : 'View Details →'}
+                        </span>
+                      )}
+                    </div>
+                  </a>
+                )
+              })
             )}
           </div>
         </div>
@@ -130,25 +174,33 @@ export default async function HomePage({ params }: HomePageProps) {
       {/* Clients Section - Dynamic from database */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-            {language === 'zh' ? '服务客户' : 'Our Clients'}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+          <div className="text-center mb-12">
+            <div className="w-12 h-1 bg-gold-500 mx-auto mb-4" />
+            <h2 className="text-3xl font-bold text-navy-900 mb-2">
+              {language === 'zh' ? '服务客户' : 'Our Clients'}
+            </h2>
+            <p className="text-navy-500 max-w-2xl mx-auto">
+              {language === 'zh'
+                ? '我们为各类企业及个人客户提供专业法律服务'
+                : 'We provide professional legal services to various businesses and individuals'}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {clients.length === 0 ? (
-              <p className="col-span-full text-center text-gray-500">
+              <p className="col-span-full text-center text-navy-400">
                 {language === 'zh' ? '暂无客户' : 'No clients available'}
               </p>
             ) : (
               clients.map((client) => (
-                <div key={client.id} className="h-24 bg-gray-100 rounded-lg flex items-center justify-center p-4">
+                <div key={client.id} className="h-24 bg-white rounded-lg shadow-sm border border-gray-100 flex items-center justify-center p-4 hover:shadow-md hover:border-gold-300 transition-all duration-200">
                   {client.logoUrl ? (
                     <img
                       src={client.logoUrl}
                       alt={client.name}
-                      className="max-h-16 max-w-full object-contain"
+                      className="max-h-16 max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
                     />
                   ) : (
-                    <span className="text-gray-500 text-sm text-center">{client.name}</span>
+                    <span className="text-navy-400 text-sm text-center">{client.name}</span>
                   )}
                 </div>
               ))

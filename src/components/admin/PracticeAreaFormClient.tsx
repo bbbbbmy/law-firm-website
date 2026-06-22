@@ -1,7 +1,14 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+interface ArticleOption {
+  id: string
+  slug: string
+  title: string
+  language: string
+}
 
 interface PracticeAreaFormData {
   imageUrl: string
@@ -9,6 +16,7 @@ interface PracticeAreaFormData {
   titleEn: string
   descZh: string
   descEn: string
+  articleSlug: string
   sortOrder: number
 }
 
@@ -20,6 +28,7 @@ interface PracticeAreaFormClientProps {
     titleEn: string
     descZh: string | null
     descEn: string | null
+    articleSlug: string | null
     sortOrder: number
   }
   mode: 'new' | 'edit'
@@ -29,6 +38,8 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [articles, setArticles] = useState<ArticleOption[]>([])
+  const [loadingArticles, setLoadingArticles] = useState(true)
 
   const [form, setForm] = useState<PracticeAreaFormData>({
     imageUrl: initialData?.imageUrl ?? '',
@@ -36,8 +47,32 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
     titleEn: initialData?.titleEn ?? '',
     descZh: initialData?.descZh ?? '',
     descEn: initialData?.descEn ?? '',
+    articleSlug: initialData?.articleSlug ?? '',
     sortOrder: initialData?.sortOrder ?? 0,
   })
+
+  // Fetch articles (cases) for selection
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const res = await fetch('/api/admin/articles?type=case')
+        if (res.ok) {
+          const data = await res.json()
+          setArticles(data.map((a: any) => ({
+            id: a.id,
+            slug: a.slug,
+            title: a.title,
+            language: a.language,
+          })))
+        }
+      } catch (err) {
+        console.error('Failed to fetch articles:', err)
+      } finally {
+        setLoadingArticles(false)
+      }
+    }
+    fetchArticles()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +89,10 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          articleSlug: form.articleSlug || null,
+        }),
       })
 
       if (!res.ok) {
@@ -64,12 +102,16 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
 
       router.push('/admin/practice-areas')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存失败')
     } finally {
       setLoading(false)
     }
   }
+
+  // Group articles by language
+  const zhArticles = articles.filter(a => a.language === 'zh')
+  const enArticles = articles.filter(a => a.language === 'en')
 
   return (
     <div className="max-w-2xl">
@@ -94,7 +136,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
             value={form.imageUrl}
             onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
             placeholder="https://..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
           />
         </div>
 
@@ -119,7 +161,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
               required
               value={form.titleZh}
               onChange={(e) => setForm({ ...form, titleZh: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
             />
           </div>
 
@@ -130,7 +172,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
               required
               value={form.titleEn}
               onChange={(e) => setForm({ ...form, titleEn: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
             />
           </div>
         </div>
@@ -141,7 +183,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
             rows={3}
             value={form.descZh}
             onChange={(e) => setForm({ ...form, descZh: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
           />
         </div>
 
@@ -151,8 +193,44 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
             rows={3}
             value={form.descEn}
             onChange={(e) => setForm({ ...form, descEn: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            关联文章（可选）
+          </label>
+          <p className="text-xs text-gray-500 mb-2">
+            选择后点击业务领域将跳转到对应的案例文章
+          </p>
+          {loadingArticles ? (
+            <div className="px-3 py-2 text-gray-500">加载中...</div>
+          ) : (
+            <select
+              value={form.articleSlug}
+              onChange={(e) => setForm({ ...form, articleSlug: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
+            >
+              <option value="">-- 不关联文章 --</option>
+              <optgroup label="中文案例">
+                {zhArticles.length === 0 && <option disabled>无可用案例</option>}
+                {zhArticles.map((article) => (
+                  <option key={article.slug} value={article.slug}>
+                    {article.title}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="English Cases">
+                {enArticles.length === 0 && <option disabled>No cases available</option>}
+                {enArticles.map((article) => (
+                  <option key={article.slug} value={article.slug}>
+                    {article.title}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+          )}
         </div>
 
         <div>
@@ -161,7 +239,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
             type="number"
             value={form.sortOrder}
             onChange={(e) => setForm({ ...form, sortOrder: parseInt(e.target.value) || 0 })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500"
           />
         </div>
 
@@ -176,7 +254,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 disabled:opacity-50"
+            className="bg-gold-600 text-white px-6 py-2 rounded-md hover:bg-gold-700 disabled:opacity-50 transition-colors"
           >
             {loading ? '保存中...' : '保存'}
           </button>

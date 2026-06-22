@@ -30,6 +30,7 @@ export interface TeamMemberData {
 }
 
 export interface ArticleData {
+  coverImageUrl: string | null
   id: string
   slug: string
   type: 'news' | 'case'
@@ -56,6 +57,7 @@ export interface BannerData {
 }
 
 export interface PracticeAreaData {
+  articleSlug: string | null
   id: string
   imageUrl: string
   titleZh: string

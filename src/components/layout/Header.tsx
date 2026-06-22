@@ -36,30 +36,33 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-navy-900 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href={`/${lang}`} className="flex items-center space-x-3">
+          <Link href={`/${lang}`} className="flex items-center space-x-3 group">
             {logoUrl ? (
-              <img src={logoUrl} alt={firmName} className="h-10 w-auto" />
+              <img src={logoUrl} alt={firmName} className="h-12 w-auto" />
             ) : (
-              <div className="w-10 h-10 bg-primary-700 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-lg">
+              <div className="w-12 h-12 bg-gold-500 rounded flex items-center justify-center shadow-md">
+                <span className="text-navy-900 font-bold text-xl font-serif">
                   {firmName.charAt(0)}
                 </span>
               </div>
             )}
-            <span className="font-semibold text-gray-900 hidden sm:block">{firmName}</span>
+            <div className="hidden sm:block">
+              <span className="text-white font-semibold text-lg tracking-wide">{firmName}</span>
+              <span className="block text-gold-400 text-xs tracking-widest uppercase">Law Firm</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-6">
-            {NAV_ITEMS.map((item) => (
+          <nav className="hidden lg:flex items-center space-x-1">
+            {NAV_ITEMS.slice(0, 6).map((item) => (
               <Link
                 key={item.href}
                 href={`/${lang}${item.href}`}
-                className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium"
+                className="px-4 py-2 text-white/90 hover:text-gold-400 transition-colors text-sm font-medium tracking-wide"
               >
                 {lang === 'zh' ? item.label : item.labelEn}
               </Link>
@@ -71,7 +74,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             {/* Language Switcher */}
             <Link
               href={getLocalizedHref('/')}
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-sm font-medium text-gold-400 hover:text-gold-300 transition-colors border border-gold-500/50 hover:border-gold-400 px-3 py-1 rounded"
             >
               {langLabel} | {otherLangLabel}
             </Link>
@@ -79,7 +82,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             {/* Search Icon */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="text-gray-700 hover:text-primary-600 transition-colors"
+              className="text-white/80 hover:text-gold-400 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -89,7 +92,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden text-gray-700"
+              className="lg:hidden text-white/80 hover:text-gold-400 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
@@ -104,12 +107,12 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden py-4 border-t">
+          <nav className="lg:hidden py-4 border-t border-white/10">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
                 href={`/${lang}${item.href}`}
-                className="block py-2 text-gray-700 hover:text-primary-600 transition-colors"
+                className="block py-3 text-white/80 hover:text-gold-400 transition-colors border-b border-white/5"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {lang === 'zh' ? item.label : item.labelEn}
@@ -117,7 +120,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             ))}
             <Link
               href={getLocalizedHref('/')}
-              className="block py-2 text-primary-600 font-medium"
+              className="block py-3 text-gold-400 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {lang === 'zh' ? '切换到英文' : 'Switch to Chinese'}
@@ -127,7 +130,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
 
         {/* Search Modal */}
         {isSearchOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white shadow-lg border-t">
+          <div className="absolute top-full left-0 right-0 bg-navy-800 shadow-lg border-t border-gold-500/20">
             <div className="max-w-2xl mx-auto px-4 py-4">
               <form onSubmit={handleSearch} className="flex gap-2">
                 <input
@@ -135,19 +138,19 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={lang === 'zh' ? '搜索文章...' : 'Search articles...'}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="flex-1 px-4 py-3 border border-navy-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500 bg-navy-700 text-white placeholder-navy-300"
                   autoFocus
                 />
                 <button
                   type="submit"
-                  className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700"
+                  className="bg-gold-600 text-navy-900 px-6 py-3 rounded-lg hover:bg-gold-500 font-medium"
                 >
                   {lang === 'zh' ? '搜索' : 'Search'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(false)}
-                  className="px-4 py-2 text-gray-500 hover:text-gray-700"
+                  className="px-4 py-3 text-navy-300 hover:text-white"
                 >
                   ✕
                 </button>

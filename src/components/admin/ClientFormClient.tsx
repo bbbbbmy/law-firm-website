@@ -58,8 +58,8 @@ export default function ClientFormClient({ initialData, mode }: ClientFormClient
 
       router.push('/admin/clients')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存失败')
     } finally {
       setLoading(false)
     }

@@ -67,8 +67,8 @@ export default function TeamFormClient({ initialData, mode }: TeamFormClientProp
 
       router.push('/admin/team')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存失败')
     } finally {
       setLoading(false)
     }
