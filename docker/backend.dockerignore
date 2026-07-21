@@ -1,0 +1,19 @@
+# Backend build context excludes
+node_modules
+.next
+.git
+.gitignore
+.github
+docker
+docs
+openspec
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vscode
+.idea
+coverage
+*.tsbuildinfo
+next-env.d.ts
