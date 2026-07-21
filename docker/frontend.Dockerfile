@@ -30,8 +30,11 @@ COPY . .
 # 生成 Prisma Client（代码里有 @prisma/client 运行时依赖）
 RUN npx prisma generate
 
-# 关闭 basePath，让 frontend 镜像以根路径对外提供（搭配反向代理的 /lawfirm 前缀剥离）
-ENV NEXT_PUBLIC_BASE_PATH=
+# 设置 NEXT_PUBLIC_BASE_PATH 由运行时环境变量决定，build 阶段用占位值。
+# 镜像启动时可在 docker-compose 里覆盖为 /lawfirm 或空字符串。
+ENV NEXT_PUBLIC_BASE_PATH=/lawfirm
+# 放开 Node 内存限制（GitHub runner 偶发 build 超 2GB）
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build
 
 # ---------- Stage 3: runner ----------

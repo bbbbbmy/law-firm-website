@@ -107,6 +107,19 @@ jobs:
           provenance: true
           sbom: true
 
+      # ===== 调试补丁：buildx 日志只显示 139 行容易丢信息 =====
+      # 失败时把 buildkit 完整日志以 artifact 形式上传，方便排查
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.image }}-${{ matrix.target.name }}
+          path: |
+            ${{ runner.temp }}/buildkit-*.log
+            .next-build-error.log
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Image digest (PR 评论用)
         id: digest
         if: github.event_name != 'pull_request'

@@ -23,8 +23,10 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-# 后端模式：前端静态页用占位集，仅暴露 API + admin
+# 后端模式：仅暴露 API + admin，不包含公开官网静态页
 ENV NEXT_PUBLIC_APP_MODE=backend
+# 放开 Node 内存限制（GitHub runner 偶发 build 超 2GB）
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
