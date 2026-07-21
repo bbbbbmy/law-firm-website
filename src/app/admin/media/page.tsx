@@ -22,7 +22,7 @@ export default function MediaPage() {
   const loadMediaFiles = () => {
     // For now, we'll scan the uploads directory via API
     // Since this is a client component, we'll fetch from an API
-    fetch('/api/upload')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/upload`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.files)) {
@@ -45,7 +45,7 @@ export default function MediaPage() {
         formData.append('file', file)
         formData.append('type', 'media')
 
-        const res = await fetch('/api/upload', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/upload`, {
           method: 'POST',
           body: formData,
         })

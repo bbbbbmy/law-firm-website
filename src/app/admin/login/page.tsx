@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/admin/auth', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/admin/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: username, password }), // API expects email field
