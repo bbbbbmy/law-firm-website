@@ -39,7 +39,6 @@ export async function PUT(
       data: {
         name: data.name,
         logoUrl: data.logoUrl,
-        website: data.website,
         sortOrder: data.sortOrder ?? 0,
       },
     })

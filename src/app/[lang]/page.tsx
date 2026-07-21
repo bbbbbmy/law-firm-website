@@ -192,16 +192,19 @@ export default async function HomePage({ params }: HomePageProps) {
               </p>
             ) : (
               clients.map((client) => (
-                <div key={client.id} className="h-24 bg-white rounded-lg shadow-sm border border-gray-100 flex items-center justify-center p-4 hover:shadow-md hover:border-gold-300 transition-all duration-200">
-                  {client.logoUrl ? (
-                    <img
-                      src={client.logoUrl}
-                      alt={client.name}
-                      className="max-h-16 max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
-                    />
-                  ) : (
-                    <span className="text-navy-400 text-sm text-center">{client.name}</span>
-                  )}
+                <div key={client.id} className="flex flex-col items-center justify-center p-4 hover:shadow-md hover:border-gold-300 transition-all duration-200">
+                  <div className="h-20 w-full bg-white rounded-lg shadow-sm border border-gray-100 flex items-center justify-center p-2">
+                    {client.logoUrl ? (
+                      <img
+                        src={client.logoUrl}
+                        alt={client.name}
+                        className="max-h-16 max-w-full object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                      />
+                    ) : (
+                      <span className="text-navy-400 text-sm text-center">{client.name}</span>
+                    )}
+                  </div>
+                  <span className="mt-2 text-xs text-navy-400 text-center truncate w-full">{client.name}</span>
                 </div>
               ))
             )}

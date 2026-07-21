@@ -22,7 +22,6 @@ export default async function EditClientPage({ params }: PageProps) {
         id: client.id,
         name: client.name,
         logoUrl: client.logoUrl,
-        website: client.website,
         sortOrder: client.sortOrder,
       }}
     />

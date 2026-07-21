@@ -12,6 +12,7 @@ export default async function AdminDashboard() {
     { label: '文章总数', value: articleCount, icon: '📝', href: '/admin/articles' },
     { label: '团队成员', value: teamMemberCount, icon: '👥', href: '/admin/team' },
     { label: 'Banner图片', value: bannerCount, icon: '🖼️', href: '/admin/banners' },
+    { label: '联系我们', value: '—', icon: '📞', href: '/admin/contact' },
   ]
 
   return (
@@ -45,6 +46,7 @@ export default async function AdminDashboard() {
           <QuickAction href="/admin/team/new" icon="👤" label="添加成员" />
           <QuickAction href="/admin/banners" icon="🖼️" label="管理Banner" />
           <QuickAction href="/admin/media" icon="📁" label="上传图片" />
+          <QuickAction href="/admin/contact" icon="📞" label="联系我们" />
         </div>
       </div>
     </div>

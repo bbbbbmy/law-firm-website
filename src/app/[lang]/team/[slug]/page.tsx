@@ -71,14 +71,16 @@ export default async function TeamMemberPage({ params }: TeamMemberPageProps) {
                 </p>
 
                 <div className="prose max-w-none">
-                  {language === 'zh' ? member.bioZh : member.bioEn ? (
-                    <p className="text-gray-600 whitespace-pre-line">
-                      {language === 'zh' ? member.bioZh : member.bioEn}
-                    </p>
+                  {language === 'zh' ? (
+                    member.bioZh ? (
+                      <p className="text-gray-600 whitespace-pre-line">{member.bioZh}</p>
+                    ) : (
+                      <p className="text-gray-400 italic">暂无简介</p>
+                    )
+                  ) : member.bioEn ? (
+                    <p className="text-gray-600 whitespace-pre-line">{member.bioEn}</p>
                   ) : (
-                    <p className="text-gray-400 italic">
-                      {language === 'zh' ? '暂无简介' : 'No biography available'}
-                    </p>
+                    <p className="text-gray-400 italic">No biography available</p>
                   )}
                 </div>
               </div>

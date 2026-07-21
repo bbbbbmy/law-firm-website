@@ -134,3 +134,19 @@ model Client {
 
   @@map("clients")
 }
+
+model ContactInfo {
+  id        String   @id @default(cuid())
+  language  Language @default(zh)
+  address   String?
+  phone     String?
+  email     String?
+  wechatQrUrl    String?
+  serviceQrUrl   String?
+  mapUrl    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([language])
+  @@map("contact_info")
+}

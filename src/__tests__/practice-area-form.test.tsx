@@ -1,6 +1,5 @@
 import PracticeAreaFormClient from '@/components/admin/PracticeAreaFormClient'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { useRouter } from 'next/navigation'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({

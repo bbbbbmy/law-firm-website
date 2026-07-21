@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { decryptSession, type AdminSession } from '@/lib/session'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow access to login page and static assets
+  // Allow login page and static assets through
   if (
     pathname === '/admin/login' ||
     pathname.startsWith('/admin/login') ||
@@ -15,9 +16,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // For all other /admin routes, let them through - admin layout will handle auth
+  // Protect /admin routes
   if (pathname.startsWith('/admin')) {
-    return NextResponse.next()
+    const sessionCookie = request.cookies.get('law-firm-admin-session')
+    const session: AdminSession | null = sessionCookie
+      ? await decryptSession(sessionCookie.value)
+      : null
+
+    if (!session?.isLoggedIn) {
+      const loginUrl = new URL('/admin/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   return NextResponse.next()

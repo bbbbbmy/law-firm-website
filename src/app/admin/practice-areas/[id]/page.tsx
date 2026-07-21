@@ -25,6 +25,7 @@ export default async function EditPracticeAreaPage({ params }: PageProps) {
         titleEn: practiceArea.titleEn,
         descZh: practiceArea.descZh,
         descEn: practiceArea.descEn,
+        articleSlug: practiceArea.articleSlug,
         sortOrder: practiceArea.sortOrder,
       }}
     />

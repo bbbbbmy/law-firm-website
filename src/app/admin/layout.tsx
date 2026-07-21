@@ -58,6 +58,7 @@ export default async function AdminLayout({
               <SidebarLink href="/admin/practice-areas" icon="⚖️" label="业务领域" />
               <SidebarLink href="/admin/clients" icon="🏢" label="服务客户" />
               <SidebarLink href="/admin/banners" icon="🖼️" label="Banner管理" />
+              <SidebarLink href="/admin/contact" icon="📞" label="联系我们" />
               <SidebarLink href="/admin/media" icon="📁" label="媒体库" />
               <SidebarLink href="/admin/settings" icon="⚙️" label="网站设置" />
             </nav>

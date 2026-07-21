@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       data: {
         name: data.name,
         logoUrl: data.logoUrl,
-        website: data.website,
         sortOrder: data.sortOrder ?? 0,
       },
     })

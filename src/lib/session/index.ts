@@ -28,3 +28,22 @@ export async function getSession(): Promise<IronSession<AdminSession>> {
   const session = await getIronSession<AdminSession>(cookies(), sessionOptions)
   return session
 }
+
+// Decrypt a raw session cookie value — used by middleware
+export async function decryptSession(
+  cookieValue: string
+): Promise<AdminSession | null> {
+  try {
+    const { unsealData } = await import('iron-session')
+    const data = await unsealData<AdminSession>(cookieValue, {
+      password: sessionOptions.password,
+    })
+    return {
+      ...defaultSession,
+      ...data,
+      isLoggedIn: Boolean(data.adminId),
+    }
+  } catch {
+    return null
+  }
+}

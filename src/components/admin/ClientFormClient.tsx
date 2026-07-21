@@ -6,7 +6,6 @@ import { useState } from 'react'
 interface ClientFormData {
   name: string
   logoUrl: string
-  website: string
   sortOrder: number
 }
 
@@ -15,7 +14,6 @@ interface ClientFormClientProps {
     id: string
     name: string
     logoUrl: string | null
-    website: string | null
     sortOrder: number
   }
   mode: 'new' | 'edit'
@@ -29,7 +27,6 @@ export default function ClientFormClient({ initialData, mode }: ClientFormClient
   const [form, setForm] = useState<ClientFormData>({
     name: initialData?.name ?? '',
     logoUrl: initialData?.logoUrl ?? '',
-    website: initialData?.website ?? '',
     sortOrder: initialData?.sortOrder ?? 0,
   })
 
@@ -114,17 +111,6 @@ export default function ClientFormClient({ initialData, mode }: ClientFormClient
             </div>
           </div>
         )}
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">网站</label>
-          <input
-            type="url"
-            value={form.website}
-            onChange={(e) => setForm({ ...form, website: e.target.value })}
-            placeholder="https://..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-          />
-        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">排序</label>
