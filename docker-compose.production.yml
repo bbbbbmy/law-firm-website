@@ -1,0 +1,90 @@
+# =============================================================================
+# law-firm-website :: 生产部署 compose（IP-only 模式）
+# 适用于 120.26.244.170（Debian 13 / Docker 29.5.2）
+#
+# 网络拓扑：
+#   - traefik（已存在，bridge）：反代用，本次没接
+#   - pgsql_default（已存在，bridge）：复用 postgres 容器 pgsql-pgsql-1
+#   - lawfirm_net（本 compose 创建）：frontend + backend 互通
+#
+# 端口：
+#   - frontend → 主机 3000（HTTP，IP 直接访问）
+#   - backend  → 主机 3001（HTTP，IP 直接访问）
+#
+# 数据库（前置，需手动 init）：
+#   - 复用 pgsql-pgsql-1
+#   - 已建 lawfirm 用户 + lawfirm_db（见 scripts/init-db.sh）
+# =============================================================================
+
+services:
+  frontend:
+    image: ghcr.io/bbbbbmy/lawfirm-frontend:sha-ad69600
+    container_name: lawfirm-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    # 用 tmpfs 空挂载覆盖 /app/.env，避免镜像里那份旧 DATABASE_URL 覆盖 compose 注入
+    volumes:
+      - /opt/law-firm/.env.frontend:/app/.env:ro
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_BASE_PATH: ""          # IP 直访，不要 /lawfirm 前缀
+      DATABASE_URL: "postgresql://lawfirm:${LAWFIRM_DB_PASSWORD}@pgsql-pgsql-1:5432/lawfirm_db?schema=public"
+      SESSION_SECRET: "${SESSION_SECRET}"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      NEXT_PUBLIC_SITE_URL: "http://${PUBLIC_HOST}:3000"
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    networks:
+      - lawfirm_net
+      - pgsql_default                # 跨网络 join，才能解析 pgsql-pgsql-1
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    image: ghcr.io/bbbbbmy/lawfirm-backend:sha-ad69600
+    container_name: lawfirm-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3000"                  # 主机 3001 → 容器 3000
+    volumes:
+      - /opt/law-firm/.env.backend:/app/.env:ro
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_MODE: backend
+      DATABASE_URL: "postgresql://lawfirm:${LAWFIRM_DB_PASSWORD}@pgsql-pgsql-1:5432/lawfirm_db?schema=public"
+      SESSION_SECRET: "${SESSION_SECRET}"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    networks:
+      - lawfirm_net
+      - pgsql_default
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  lawfirm_net:
+    name: lawfirm_net
+    driver: bridge
+  pgsql_default:
+    name: pgsql_default             # 复用已存在的网络
+    external: true
