@@ -2,6 +2,9 @@ import { PageLayout, HeroBanner } from '@/components/layout'
 import { ArticleList } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
 
+// 案件列表依赖数据库，必须运行时渲染
+export const dynamic = 'force-dynamic'
+
 interface CasesPageProps {
   params: Promise<{ lang: string }>
 }

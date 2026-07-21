@@ -1,6 +1,9 @@
 import { PageLayout, HeroBanner } from '@/components/layout'
 import { prisma } from '@/lib/prisma'
 
+// 联系我们页面读取 contactInfo，运行时渲染
+export const dynamic = 'force-dynamic'
+
 interface ContactPageProps {
   params: Promise<{ lang: string }>
 }

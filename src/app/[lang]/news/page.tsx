@@ -2,6 +2,9 @@ import { PageLayout, HeroBanner } from '@/components/layout'
 import { ArticleList } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
 
+// 新闻列表依赖数据库，运行时渲染
+export const dynamic = 'force-dynamic'
+
 interface NewsPageProps {
   params: Promise<{ lang: string }>
   searchParams: Promise<{ search?: string }>

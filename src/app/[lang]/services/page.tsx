@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Language } from '@/types'
 
+// 服务领域页面查询 practiceArea + article，运行时渲染
+export const dynamic = 'force-dynamic'
+
 interface ServicesPageProps {
   params: Promise<{ lang: string }>
 }

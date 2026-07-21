@@ -2,6 +2,9 @@ import { PageLayout } from '@/components/layout'
 import { BannerCarousel, ArticleList } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
 
+// 首页含数据库查询，必须在运行时渲染，不要在 build 时尝试预渲染
+export const dynamic = 'force-dynamic'
+
 interface HomePageProps {
   params: Promise<{ lang: string }>
 }

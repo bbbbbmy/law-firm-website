@@ -2,6 +2,9 @@ import { PageLayout, HeroBanner } from '@/components/layout'
 import { TeamGrid } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
 
+// 团队页面依赖数据库，运行时渲染
+export const dynamic = 'force-dynamic'
+
 interface TeamPageProps {
   params: Promise<{ lang: string }>
 }
