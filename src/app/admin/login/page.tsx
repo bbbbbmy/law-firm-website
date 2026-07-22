@@ -3,6 +3,28 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+/**
+ * 在客户端运行时计算 basePath。
+ *
+ * 为什么不用 process.env.NEXT_PUBLIC_BASE_PATH？
+ *   next.config.mjs 的 basePath 字段不会自动暴露成 NEXT_PUBLIC_BASE_PATH，
+ *   而 webpack 只会替换源码中字面量出现的 process.env.NEXT_PUBLIC_* 引用，
+ *   所以直接读这个变量在客户端是 undefined。
+ *
+ * 可靠做法：从当前 URL 反推。当前页是 /lawfirm/admin/login 时：
+ *   pathname = "/lawfirm/admin/login"
+ *   取掉最后两段 "/admin/login" 得到 basePath = "/lawfirm"。
+ *
+ * 如果部署到根路径（basePath=""），则取掉 "/admin/login" 得空串，符合预期。
+ */
+function detectBasePath(): string {
+  if (typeof window === 'undefined') return ''
+  const p = window.location.pathname
+  // 匹配 /<base>/admin/login 或 /admin/login
+  const m = p.match(/^(\/[^/]*)?\/admin\/login\/?$/)
+  return m && m[1] ? m[1] : ''
+}
+
 export default function AdminLoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -15,11 +37,13 @@ export default function AdminLoginPage() {
     setError('')
     setLoading(true)
 
+    const basePath = detectBasePath()
+
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/admin/auth`, {
+      const res = await fetch(`${basePath}/api/admin/auth`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: username, password }), // API expects email field
+        body: JSON.stringify({ email: username, password }),
       })
 
       const data = await res.json()
@@ -29,7 +53,7 @@ export default function AdminLoginPage() {
         return
       }
 
-      router.push(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/admin`)
+      router.push(`${basePath}/admin`)
       router.refresh()
     } catch {
       setError('网络错误，请重试')

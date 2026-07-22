@@ -9,6 +9,13 @@ interface MediaFile {
   createdAt: string
 }
 
+// 从当前 URL 反推 basePath。当前页是 /lawfirm/admin/media 时：
+// pathname.split('/admin')[0] = '/lawfirm'；部署在根路径时 = ''。
+function detectBasePath(): string {
+  if (typeof window === 'undefined') return ''
+  return window.location.pathname.split('/admin')[0] || ''
+}
+
 export default function MediaPage() {
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
@@ -20,9 +27,10 @@ export default function MediaPage() {
   }, [])
 
   const loadMediaFiles = () => {
+    const basePath = detectBasePath()
     // For now, we'll scan the uploads directory via API
     // Since this is a client component, we'll fetch from an API
-    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/upload`)
+    fetch(`${basePath}/api/upload`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data.files)) {
@@ -38,6 +46,7 @@ export default function MediaPage() {
     if (!files || files.length === 0) return
 
     setUploading(true)
+    const basePath = detectBasePath()
 
     try {
       for (const file of Array.from(files)) {
@@ -45,7 +54,7 @@ export default function MediaPage() {
         formData.append('file', file)
         formData.append('type', 'media')
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/upload`, {
+        const res = await fetch(`${basePath}/api/upload`, {
           method: 'POST',
           body: formData,
         })
