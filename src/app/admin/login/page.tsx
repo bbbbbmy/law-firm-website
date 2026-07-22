@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
         return
       }
 
-      router.push('/admin')
+      router.push(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/admin`)
       router.refresh()
     } catch {
       setError('网络错误，请重试')
