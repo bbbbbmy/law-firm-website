@@ -18,7 +18,7 @@
 
 services:
   frontend:
-    image: ghcr.io/bbbbbmy/lawfirm-frontend:sha-e286a3c
+    image: ghcr.io/bbbbbmy/lawfirm-frontend:sha-7f88af5
     container_name: lawfirm-frontend
     restart: unless-stopped
     ports:
@@ -26,6 +26,9 @@ services:
     # 用 tmpfs 空挂载覆盖 /app/.env，避免镜像里那份旧 DATABASE_URL 覆盖 compose 注入
     volumes:
       - /opt/law-firm/.env.frontend:/app/.env:ro
+      # 持久化 uploads：把宿主机目录挂进容器，运行时上传的文件
+      # 在容器 recreate 时不丢失，且两个镜像（frontend/backend）能共享
+      - /opt/law-firm/uploads:/app/public/uploads
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_BASE_PATH: ""          # IP 直访，不要 /lawfirm 前缀
@@ -51,13 +54,15 @@ services:
         max-file: "3"
 
   backend:
-    image: ghcr.io/bbbbbmy/lawfirm-backend:sha-e286a3c
+    image: ghcr.io/bbbbbmy/lawfirm-backend:sha-7f88af5
     container_name: lawfirm-backend
     restart: unless-stopped
     ports:
       - "3001:3000"                  # 主机 3001 → 容器 3000
     volumes:
       - /opt/law-firm/.env.backend:/app/.env:ro
+      # backend 也挂同一个 uploads 目录，共享文件
+      - /opt/law-firm/uploads:/app/public/uploads
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_APP_MODE: backend
