@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
         return
       }
 
-      router.push(`${basePath}/admin`)
+      router.push('/admin')
       router.refresh()
     } catch {
       setError('网络错误，请重试')
