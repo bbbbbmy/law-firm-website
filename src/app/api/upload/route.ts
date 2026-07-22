@@ -1,9 +1,16 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
-export async function GET() {
+// 从 NextRequest 拿 basePath（Next.js 14 server 端会正确解析）。
+// request.nextUrl.basePath 返回 next.config.mjs 里的 basePath（'/lawfirm'）。
+function basePathOf(request: NextRequest): string {
+  return request.nextUrl.basePath || ''
+}
+
+export async function GET(request: NextRequest) {
   try {
+    const basePath = basePathOf(request)
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'media')
 
     if (!fs.existsSync(uploadDir)) {
@@ -17,7 +24,7 @@ export async function GET() {
 
       return {
         filename,
-        url: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/uploads/media/${filename}`,
+        url: `${basePath}/uploads/media/${filename}`,
         type: 'media',
         createdAt: stats.birthtime.toISOString(),
       }
@@ -30,8 +37,9 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const basePath = basePathOf(request)
     const formData = await request.formData()
     const file = formData.get('file') as File | null
     const type = (formData.get('type') as string) || 'media'
@@ -69,7 +77,7 @@ export async function POST(request: Request) {
     fs.writeFileSync(filePath, buffer)
 
     return NextResponse.json({
-      url: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/uploads/${type}/${uniqueFilename}`,
+      url: `${basePath}/uploads/${type}/${uniqueFilename}`,
       filename: uniqueFilename,
     })
   } catch (error) {
