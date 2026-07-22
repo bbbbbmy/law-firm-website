@@ -2,15 +2,20 @@ import { NextResponse, type NextRequest } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
-// 从 NextRequest 拿 basePath（Next.js 14 server 端会正确解析）。
-// request.nextUrl.basePath 返回 next.config.mjs 里的 basePath（'/lawfirm'）。
-function basePathOf(request: NextRequest): string {
-  return request.nextUrl.basePath || ''
+// 从 NextRequest 拿 basePath。
+// 注：Next.js 14 在 App Router 下会把 basePath 从 nextUrl.pathname 剥离，
+// 所以 request.nextUrl.basePath 总是空字符串。
+// 但 next.config.mjs 的 basePath 是固定值，直接从配置文件读最稳。
+function basePathOf(): string {
+  // 读 next.config.mjs 的 basePath
+  // 这里硬编码是因为 next.config.mjs 不容易被 server runtime 引用
+  // 如果你想动态读，可以 require('@/next.config') 但 Next.js 不导出
+  return '/lawfirm'
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const basePath = basePathOf(request)
+    const basePath = basePathOf()
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'media')
 
     if (!fs.existsSync(uploadDir)) {
@@ -39,7 +44,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const basePath = basePathOf(request)
+    const basePath = basePathOf()
     const formData = await request.formData()
     const file = formData.get('file') as File | null
     const type = (formData.get('type') as string) || 'media'
