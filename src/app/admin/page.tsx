@@ -2,17 +2,23 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
 export default async function AdminDashboard() {
-  const [articleCount, teamMemberCount, bannerCount] = await Promise.all([
+  const [articleCount, teamMemberCount, bannerCount, contactZh, contactEn] = await Promise.all([
     prisma.article.count(),
     prisma.teamMember.count(),
     prisma.banner.count(),
+    prisma.contactInfo.findUnique({ where: { language: 'zh' } }),
+    prisma.contactInfo.findUnique({ where: { language: 'en' } }),
   ])
+
+  // 联系我们配置状态：中英双份都有才算"已配置"
+  const contactConfigured = Boolean(contactZh && contactEn)
+  const contactStatus = contactConfigured ? '✓' : '—'
 
   const stats = [
     { label: '文章总数', value: articleCount, icon: '📝', href: '/admin/articles' },
     { label: '团队成员', value: teamMemberCount, icon: '👥', href: '/admin/team' },
     { label: 'Banner图片', value: bannerCount, icon: '🖼️', href: '/admin/banners' },
-    { label: '联系我们', value: '—', icon: '📞', href: '/admin/contact' },
+    { label: '联系我们', value: contactStatus, icon: '📞', href: '/admin/contact' },
   ]
 
   return (
