@@ -17,7 +17,7 @@ export async function GET() {
 
       return {
         filename,
-        url: `/uploads/media/${filename}`,
+        url: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/uploads/media/${filename}`,
         type: 'media',
         createdAt: stats.birthtime.toISOString(),
       }
@@ -68,9 +68,10 @@ export async function POST(request: Request) {
 
     fs.writeFileSync(filePath, buffer)
 
-    const url = `/uploads/${type}/${uniqueFilename}`
-
-    return NextResponse.json({ url, filename: uniqueFilename })
+    return NextResponse.json({
+      url: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/uploads/${type}/${uniqueFilename}`,
+      filename: uniqueFilename,
+    })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(
