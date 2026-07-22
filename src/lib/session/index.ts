@@ -11,7 +11,10 @@ export const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters_long',
   cookieName: 'law-firm-admin-session',
   cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
+    // Secure 标志：只在 HTTPS 下发送 cookie。HTTP 站点下必须设为 false，
+    // 否则浏览器收到 Set-Cookie 但不会回传（登录后 middleware 一直判定未登录）。
+    // 部署到 HTTPS（Traefik + 域名 + 自动 SSL）时改回 true。
+    secure: process.env.COOKIE_SECURE === 'true',
     httpOnly: true,
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7, // 1 week
