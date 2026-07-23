@@ -25,7 +25,10 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(buildHref(`/news?search=${encodeURIComponent(searchQuery.trim())}`, lang))
+      // router.push 不像 <Link> 那样自动加 basePath，需要手动加 /lawfirm
+      const isProd = typeof window !== 'undefined' && window.location.pathname.startsWith('/lawfirm')
+      const basePath = isProd ? '/lawfirm' : ''
+      router.push(`${basePath}${buildHref(`/news?search=${encodeURIComponent(searchQuery.trim())}`, lang)}`)
       setIsSearchOpen(false)
       setSearchQuery('')
     }
