@@ -40,7 +40,7 @@ export default async function TeamMemberPage({ params }: TeamMemberPageProps) {
       <article className="py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <a
-            href={`/${lang}/team`}
+            href={`/lawfirm/${lang}/team`}
             className="text-primary-600 hover:text-primary-700 mb-8 inline-block"
           >
             ← {language === 'zh' ? '返回团队列表' : 'Back to Team'}

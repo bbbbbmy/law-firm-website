@@ -79,7 +79,7 @@ export default async function NewsArticlePage({ params }: ArticlePageProps) {
 
           <div className="mt-16 pt-8 border-t">
             <a
-              href={`/${lang}/news`}
+              href={`/lawfirm/${lang}/news`}
               className="text-gold-600 hover:text-gold-700"
             >
               ← {lang === 'zh' ? '返回资讯列表' : 'Back to News'}

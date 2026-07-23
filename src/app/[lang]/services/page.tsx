@@ -62,7 +62,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                     </p>
                     {area.articleSlug && (
                       <Link
-                        href={`/${lang}/cases/${area.articleSlug}`}
+                        href={`/lawfirm/${lang}/cases/${area.articleSlug}`}
                         className="inline-flex items-center text-gold-600 hover:text-gold-700 font-medium"
                       >
                         {language === 'zh' ? '查看相关案例 →' : 'View Related Cases →'}

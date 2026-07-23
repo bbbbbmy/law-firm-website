@@ -1,5 +1,9 @@
 import Link from 'next/link'
 import { PageLayout, HeroBanner } from '@/components/layout'
+import { prisma } from '@/lib/prisma'
+
+// 关于我们依赖数据库，运行时渲染
+export const dynamic = 'force-dynamic'
 
 interface AboutPageProps {
   params: Promise<{ lang: string }>
@@ -11,7 +15,8 @@ const aboutNavItems = [
   { key: 'clients', labelZh: '德善客户', labelEn: 'Esteemed Clients', href: '/about#clients' },
 ]
 
-const content = {
+// 硬编码 fallback（DB 没数据时用）
+const fallbackContent = {
   zh: {
     title: '关于我们',
     pageTitle: '关于我们',
@@ -92,12 +97,49 @@ We have established long-term and stable cooperative relationships with our clie
   },
 }
 
+interface Section {
+  id: string
+  title: string
+  content: string
+}
+
+interface PageContent {
+  title: string
+  pageTitle: string
+  breadcrumb: string
+  sections: Section[]
+}
+
 export default async function AboutPage({ params }: AboutPageProps) {
   const { lang } = await params
-  const langContent = lang === 'zh' ? content.zh : content.en
+  const language = lang === 'zh' ? 'zh' : 'en'
+
+  // 优先从 DB 读 page_contents（slug='about'）
+  let langContent: PageContent = (fallbackContent[language] as PageContent)
+  try {
+    const page = await prisma.page.findUnique({
+      where: { slug: 'about' },
+      include: {
+        contents: { where: { language } },
+      },
+    })
+    const dbContent = page?.contents[0]
+    if (dbContent?.content) {
+      try {
+        const parsed = JSON.parse(dbContent.content) as PageContent
+        if (parsed.sections && Array.isArray(parsed.sections)) {
+          langContent = parsed
+        }
+      } catch {
+        // 解析失败：保持 fallback
+      }
+    }
+  } catch {
+    // DB 读取失败：保持 fallback
+  }
 
   return (
-    <PageLayout lang={lang as 'zh' | 'en'}>
+    <PageLayout lang={language as 'zh' | 'en'}>
       <HeroBanner
         title={langContent.title}
         backgroundImageUrl="https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920"
@@ -105,11 +147,11 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
       {/* Breadcrumb and Secondary Nav */}
       <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 sm:px-8">
           {/* Breadcrumb */}
           <div className="py-4">
             <Link
-              href={`/${lang}`}
+              href={`/lawfirm/${lang}`}
               className="text-gray-500 hover:text-gold-600 transition-colors text-sm"
             >
               ← {langContent.breadcrumb}

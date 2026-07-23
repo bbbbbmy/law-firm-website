@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { TeamMemberData, Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 interface TeamGridProps {
   members: TeamMemberData[]
@@ -56,7 +57,7 @@ export default function TeamGrid({ members, lang, title }: TeamGridProps) {
                 </div>
 
                 <Link
-                  href={`/${lang}/team/${encodeURIComponent(member.name)}`}
+                  href={buildHref(`/team/${encodeURIComponent(member.name)}`, lang)}
                   className="text-gold-600 hover:text-gold-700 text-sm mt-4 inline-flex items-center group"
                 >
                   {lang === 'zh' ? '查看详情' : 'View Details'}

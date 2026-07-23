@@ -79,7 +79,7 @@ export default async function CasesArticlePage({ params }: ArticlePageProps) {
 
           <div className="mt-16 pt-8 border-t">
             <a
-              href={`/${lang}/cases`}
+              href={`/lawfirm/${lang}/cases`}
               className="text-gold-600 hover:text-gold-700"
             >
               ← {lang === 'zh' ? '返回案例列表' : 'Back to Cases'}

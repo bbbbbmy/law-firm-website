@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { NAV_ITEMS, type Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 interface HeaderProps {
   lang: Language
@@ -21,15 +22,10 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
   const langLabel = lang === 'zh' ? '中' : 'EN'
   const otherLangLabel = lang === 'zh' ? 'EN' : '中'
 
-  const getLocalizedHref = (href: string) => {
-    if (href === '/') return `/${otherLang}`
-    return `/${otherLang}${href}`
-  }
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/${lang}/news?search=${encodeURIComponent(searchQuery.trim())}`)
+      router.push(buildHref(`/news?search=${encodeURIComponent(searchQuery.trim())}`, lang))
       setIsSearchOpen(false)
       setSearchQuery('')
     }
@@ -40,7 +36,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href={`/${lang}`} className="flex items-center space-x-3 group">
+          <Link href={buildHref('/', lang)} className="flex items-center space-x-3 group">
             {logoUrl ? (
               <img src={logoUrl} alt={firmName} className="h-12 w-auto" />
             ) : (
@@ -61,7 +57,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             {NAV_ITEMS.slice(0, 6).map((item) => (
               <Link
                 key={item.href}
-                href={`/${lang}${item.href}`}
+                href={buildHref(item.href, lang)}
                 className="px-4 py-2 text-white/90 hover:text-gold-400 transition-colors text-sm font-medium tracking-wide"
               >
                 {lang === 'zh' ? item.label : item.labelEn}
@@ -73,7 +69,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
           <div className="flex items-center space-x-4">
             {/* Language Switcher */}
             <Link
-              href={getLocalizedHref('/')}
+              href={buildHref('/', otherLang)}
               className="text-sm font-medium text-gold-400 hover:text-gold-300 transition-colors border border-gold-500/50 hover:border-gold-400 px-3 py-1 rounded"
             >
               {langLabel} | {otherLangLabel}
@@ -111,7 +107,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
-                href={`/${lang}${item.href}`}
+                href={buildHref(item.href, lang)}
                 className="block py-3 text-white/80 hover:text-gold-400 transition-colors border-b border-white/5"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -119,7 +115,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
               </Link>
             ))}
             <Link
-              href={getLocalizedHref('/')}
+              href={buildHref('/', otherLang)}
               className="block py-3 text-gold-400 font-medium"
               onClick={() => setIsMobileMenuOpen(false)}
             >

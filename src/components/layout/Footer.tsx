@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 interface FooterProps {
   lang: Language
@@ -35,7 +36,7 @@ export default function Footer({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
-            <Link href={`/${lang}`} className="flex items-center space-x-3 mb-6 group">
+            <Link href={buildHref('/', lang)} className="flex items-center space-x-3 mb-6 group">
               {logoUrl ? (
                 <img src={logoUrl} alt={firmName} className="h-14 w-auto" />
               ) : (
@@ -72,7 +73,7 @@ export default function Footer({
               ].map((item) => (
                 <li key={item.href}>
                   <Link
-                    href={`/${lang}${item.href}`}
+                    href={buildHref(item.href, lang)}
                     className="text-navy-300 hover:text-gold-400 transition-colors text-sm"
                   >
                     {item.label}

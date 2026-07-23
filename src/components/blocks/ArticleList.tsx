@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { ArticleData, Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 interface ArticleListProps {
   articles: ArticleData[]
@@ -22,7 +23,7 @@ export default function ArticleList({ articles, lang, title, viewMoreHref }: Art
             </div>
             {viewMoreHref && (
               <Link
-                href={`/${lang}${viewMoreHref}`}
+                href={buildHref(viewMoreHref, lang)}
                 className="text-gold-600 hover:text-gold-700 font-medium flex items-center group"
               >
                 {lang === 'zh' ? '查看更多' : 'View More'}
@@ -38,7 +39,7 @@ export default function ArticleList({ articles, lang, title, viewMoreHref }: Art
           {articles.map((article) => (
             <Link
               key={article.id}
-              href={`/${lang}/${article.type === 'news' ? 'news' : 'cases'}/${article.slug}`}
+              href={buildHref(`/${article.type === 'news' ? 'news' : 'cases'}/${article.slug}`, lang)}
               className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gold-300"
             >
               {/* Image */}
