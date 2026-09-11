@@ -36,3 +36,6 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# pi dashboard kb toolset runtime cache (SQLite WAL + dox staleness tracker)
+.pi/dashboard/kb/
