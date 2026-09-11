@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface ContactInfo {
   language: string
@@ -80,7 +81,7 @@ export default function ContactInfoClient() {
       formData.append('file', file)
       formData.append('type', 'qrcodes')
 
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${clientBasePath()}/api/upload`, {
         method: 'POST',
         body: formData,
       })
