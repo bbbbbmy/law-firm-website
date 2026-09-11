@@ -18,7 +18,7 @@
 
 services:
   frontend:
-    image: ghcr.io/bbbbbmy/lawfirm-frontend:sha-f16ae27
+    image: ghcr.io/bbbbbmy/lawfirm-frontend:sha-9ab770d
     container_name: lawfirm-frontend
     restart: unless-stopped
     ports:
@@ -54,7 +54,7 @@ services:
         max-file: "3"
 
   backend:
-    image: ghcr.io/bbbbbmy/lawfirm-backend:sha-f16ae27
+    image: ghcr.io/bbbbbmy/lawfirm-backend:sha-9ab770d
     container_name: lawfirm-backend
     restart: unless-stopped
     ports:
