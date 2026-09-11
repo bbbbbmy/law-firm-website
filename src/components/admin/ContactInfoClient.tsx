@@ -41,7 +41,7 @@ export default function ContactInfoClient() {
   })
 
   useEffect(() => {
-    fetch('/api/admin/contact')
+    fetch(`${clientBasePath()}/api/admin/contact`)
       .then(res => res.json())
       .then(data => {
         if (data.zh) {
@@ -118,7 +118,7 @@ export default function ContactInfoClient() {
     const contact = lang === 'zh' ? zhContact : enContact
 
     try {
-      const res = await fetch('/api/admin/contact', {
+      const res = await fetch(`${clientBasePath()}/api/admin/contact`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contact),

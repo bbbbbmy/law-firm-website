@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface ArticleOption {
   id: string
@@ -55,7 +56,7 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const res = await fetch('/api/admin/articles?type=case')
+        const res = await fetch(`${clientBasePath()}/api/admin/articles?type=case`)
         if (res.ok) {
           const data = await res.json()
           setArticles(data.map((a: any) => ({
@@ -81,8 +82,8 @@ export default function PracticeAreaFormClient({ initialData, mode }: PracticeAr
 
     try {
       const url = mode === 'new'
-        ? '/api/admin/practice-areas'
-        : `/api/admin/practice-areas/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/practice-areas`
+        : `${clientBasePath()}/api/admin/practice-areas/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 

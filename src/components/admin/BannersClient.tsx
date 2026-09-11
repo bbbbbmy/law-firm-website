@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface Banner {
   id: string
@@ -20,7 +21,7 @@ export default function BannersClient({ banners }: BannersClientProps) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除此Banner吗？')) return
-    await fetch(`/api/admin/banners/${id}`, { method: 'DELETE' })
+    await fetch(`${clientBasePath()}/api/admin/banners/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

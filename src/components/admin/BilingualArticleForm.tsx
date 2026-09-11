@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 import RichTextEditor from './RichTextEditor'
 
 interface ArticleFormData {
@@ -76,8 +77,8 @@ export default function BilingualArticleForm({ initialData, mode }: BilingualArt
       }
 
       const url = mode === 'new'
-        ? '/api/admin/articles/bilingual'
-        : `/api/admin/articles/bilingual/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/articles/bilingual`
+        : `${clientBasePath()}/api/admin/articles/bilingual/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 

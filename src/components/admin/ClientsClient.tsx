@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface Client {
   id: string
@@ -20,7 +21,7 @@ export default function ClientsClient({ clients }: ClientsClientProps) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除此客户吗？')) return
-    await fetch(`/api/admin/clients/${id}`, { method: 'DELETE' })
+    await fetch(`${clientBasePath()}/api/admin/clients/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

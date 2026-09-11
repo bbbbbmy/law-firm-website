@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface TeamMember {
   id: string
@@ -23,7 +24,7 @@ export default function TeamClient({ members }: TeamClientProps) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除此成员吗？')) return
-    await fetch(`/api/admin/team/${id}`, { method: 'DELETE' })
+    await fetch(`${clientBasePath()}/api/admin/team/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface BannerFormData {
   imageUrl: string
@@ -40,8 +41,8 @@ export default function BannerFormClient({ initialData, mode }: BannerFormClient
 
     try {
       const url = mode === 'new'
-        ? '/api/admin/banners'
-        : `/api/admin/banners/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/banners`
+        : `${clientBasePath()}/api/admin/banners/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 

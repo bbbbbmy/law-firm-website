@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface TeamFormData {
   name: string
@@ -49,8 +50,8 @@ export default function TeamFormClient({ initialData, mode }: TeamFormClientProp
 
     try {
       const url = mode === 'new'
-        ? '/api/admin/team'
-        : `/api/admin/team/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/team`
+        : `${clientBasePath()}/api/admin/team/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 

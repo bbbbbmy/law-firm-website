@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface Article {
   id: string
@@ -23,7 +24,7 @@ export default function ArticlesClient({ articles }: ArticlesClientProps) {
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除这篇文章吗？')) return
-    await fetch(`/api/admin/articles/${id}`, { method: 'DELETE' })
+    await fetch(`${clientBasePath()}/api/admin/articles/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

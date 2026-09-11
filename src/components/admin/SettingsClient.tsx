@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface SiteConfig {
   key: string
@@ -47,31 +48,31 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
 
     try {
       // Save firm_name zh
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'firm_name', value: basicInfo.firmNameZh, language: 'zh' }),
       })
       // Save firm_name en
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'firm_name', value: basicInfo.firmNameEn, language: 'en' }),
       })
       // Save address
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'address', value: basicInfo.address }),
       })
       // Save phone
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'phone', value: basicInfo.phone }),
       })
       // Save email
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'email', value: basicInfo.email }),
@@ -92,27 +93,27 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
     setMessage('')
 
     try {
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'homepage_about_image_url', value: about.imageUrl }),
       })
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'homepage_about_title_zh', value: about.titleZh, language: 'zh' }),
       })
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'homepage_about_title_en', value: about.titleEn, language: 'en' }),
       })
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'homepage_about_content_zh', value: about.contentZh, language: 'zh' }),
       })
-      await fetch('/api/admin/settings', {
+      await fetch(`${clientBasePath()}/api/admin/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key: 'homepage_about_content_en', value: about.contentEn, language: 'en' }),

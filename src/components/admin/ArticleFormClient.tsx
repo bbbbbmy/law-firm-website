@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface ArticleFormData {
   slug: string
@@ -54,8 +55,8 @@ export default function ArticleFormClient({ initialData, mode }: ArticleFormClie
 
     try {
       const url = mode === 'new'
-        ? '/api/admin/articles'
-        : `/api/admin/articles/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/articles`
+        : `${clientBasePath()}/api/admin/articles/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 

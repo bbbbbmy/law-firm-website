@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface PracticeArea {
   id: string
@@ -22,7 +23,7 @@ export default function PracticeAreasClient({ practiceAreas }: PracticeAreasClie
 
   const handleDelete = async (id: string) => {
     if (!confirm('确定要删除此业务领域吗？')) return
-    await fetch(`/api/admin/practice-areas/${id}`, { method: 'DELETE' })
+    await fetch(`${clientBasePath()}/api/admin/practice-areas/${id}`, { method: 'DELETE' })
     router.refresh()
   }
 

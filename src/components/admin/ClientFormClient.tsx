@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface ClientFormData {
   name: string
@@ -37,8 +38,8 @@ export default function ClientFormClient({ initialData, mode }: ClientFormClient
 
     try {
       const url = mode === 'new'
-        ? '/api/admin/clients'
-        : `/api/admin/clients/${initialData?.id}`
+        ? `${clientBasePath()}/api/admin/clients`
+        : `${clientBasePath()}/api/admin/clients/${initialData?.id}`
 
       const method = mode === 'new' ? 'POST' : 'PUT'
 
