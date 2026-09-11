@@ -1,19 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { clientBasePath } from '@/lib/clientBasePath'
 
 interface MediaFile {
   filename: string
   url: string
   type: string
   createdAt: string
-}
-
-// 从当前 URL 反推 basePath。当前页是 /lawfirm/admin/media 时：
-// pathname.split('/admin')[0] = '/lawfirm'；部署在根路径时 = ''。
-function detectBasePath(): string {
-  if (typeof window === 'undefined') return ''
-  return window.location.pathname.split('/admin')[0] || ''
 }
 
 export default function MediaPage() {
@@ -27,7 +21,7 @@ export default function MediaPage() {
   }, [])
 
   const loadMediaFiles = () => {
-    const basePath = detectBasePath()
+    const basePath = clientBasePath()
     // For now, we'll scan the uploads directory via API
     // Since this is a client component, we'll fetch from an API
     fetch(`${basePath}/api/upload`)
@@ -46,7 +40,7 @@ export default function MediaPage() {
     if (!files || files.length === 0) return
 
     setUploading(true)
-    const basePath = detectBasePath()
+    const basePath = clientBasePath()
 
     try {
       for (const file of Array.from(files)) {
@@ -81,9 +75,57 @@ export default function MediaPage() {
     }
   }
 
-  const copyUrl = (url: string) => {
-    navigator.clipboard.writeText(window.location.origin + url)
-    alert('链接已复制')
+  // Copy the absolute URL of a media file to the clipboard.
+  //
+  // navigator.clipboard.writeText requires a secure context (HTTPS or
+  // localhost). On HTTP public origins it throws NotAllowedError and the
+  // clipboard stays empty — that's the "I clicked copy but nothing happened"
+  // failure mode. We fall back to a hidden-textarea + document.execCommand
+  // (deprecated but still works on most browsers), and finally to a prompt()
+  // the user can Ctrl+C from. Each step is gated so a partial failure
+  // surfaces clearly instead of silently dropping the URL.
+  const copyUrl = async (url: string) => {
+    const fullUrl = window.location.origin + url
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(fullUrl)
+        alert('链接已复制到剪贴板')
+        return
+      }
+    } catch {
+      // fall through to legacy path
+    }
+
+    try {
+      const ta = document.createElement('textarea')
+      ta.value = fullUrl
+      ta.setAttribute('readonly', '')
+      ta.style.position = 'fixed'
+      ta.style.top = '0'
+      ta.style.left = '0'
+      ta.style.width = '1px'
+      ta.style.height = '1px'
+      ta.style.padding = '0'
+      ta.style.border = 'none'
+      ta.style.outline = 'none'
+      ta.style.boxShadow = 'none'
+      ta.style.background = 'transparent'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.focus()
+      ta.select()
+      const ok = document.execCommand('copy')
+      document.body.removeChild(ta)
+      if (ok) {
+        alert('链接已复制到剪贴板')
+        return
+      }
+    } catch {
+      // fall through to last resort
+    }
+
+    window.prompt('自动复制失败，请按 Ctrl+C / Cmd+C 手动复制：', fullUrl)
   }
 
   return (
