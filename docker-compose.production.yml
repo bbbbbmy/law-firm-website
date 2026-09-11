@@ -35,7 +35,7 @@ services:
       DATABASE_URL: "postgresql://lawfirm:${LAWFIRM_DB_PASSWORD}@pgsql-pgsql-1:5432/lawfirm_db?schema=public"
       SESSION_SECRET: "${SESSION_SECRET}"
       ADMIN_SECRET: "${ADMIN_SECRET}"
-      NEXT_PUBLIC_SITE_URL: "http://${PUBLIC_HOST}:3000"
+      NEXT_PUBLIC_SITE_URL: "http://${PUBLIC_HOST}"  # NEXT_PUBLIC_* 在 Dockerfile 里硬编码；这里留作 documentation
       PORT: 3000
       HOSTNAME: 0.0.0.0
     networks:

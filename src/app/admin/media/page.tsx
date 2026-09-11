@@ -84,8 +84,14 @@ export default function MediaPage() {
   // (deprecated but still works on most browsers), and finally to a prompt()
   // the user can Ctrl+C from. Each step is gated so a partial failure
   // surfaces clearly instead of silently dropping the URL.
+  //
+  // Base URL: NEXT_PUBLIC_SITE_URL is inlined at build time (NEXT_PUBLIC_*
+  // are build-time only, not overridable at runtime via compose env). We
+  // fall back to window.location.origin so dev / unconfigured deploys still
+  // produce a working link.
   const copyUrl = async (url: string) => {
-    const fullUrl = window.location.origin + url
+    const baseUrl = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SITE_URL) || window.location.origin
+    const fullUrl = baseUrl + url
 
     try {
       if (navigator.clipboard && window.isSecureContext) {
