@@ -26,7 +26,7 @@ ENV NODE_ENV=production
 # 后端模式：仅暴露 API + admin，不包含公开官网静态页
 ENV NEXT_PUBLIC_APP_MODE=backend
 # 站点对外的绝对 URL（构建期内联进 JS bundle，compose 改不了）
-ENV NEXT_PUBLIC_SITE_URL=http://120.26.244.170
+ENV NEXT_PUBLIC_SITE_URL=http://120.26.244.170:3000
 # 放开 Node 内存限制（GitHub runner 偶发 build 超 2GB）
 ENV NODE_OPTIONS=--max-old-space-size=4096
 
