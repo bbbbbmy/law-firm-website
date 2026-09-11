@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { PageLayout } from '@/components/layout'
 import { BannerCarousel, ArticleList } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
@@ -144,7 +145,7 @@ export default async function HomePage({ params }: HomePageProps) {
                   ? `/${lang}/cases/${area.articleSlug}`
                   : `/${lang}/services`
                 return (
-                  <a
+                  <Link
                     key={area.id}
                     href={href}
                     className="group relative rounded-lg overflow-hidden h-48 block cursor-pointer"
@@ -166,7 +167,7 @@ export default async function HomePage({ params }: HomePageProps) {
                         </span>
                       )}
                     </div>
-                  </a>
+                  </Link>
                 )
               })
             )}
