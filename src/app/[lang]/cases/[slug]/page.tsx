@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { PageLayout } from '@/components/layout'
 import type { Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 interface ArticlePageProps {
   params: Promise<{ lang: string; slug: string }>
@@ -79,7 +80,7 @@ export default async function CasesArticlePage({ params }: ArticlePageProps) {
 
           <div className="mt-16 pt-8 border-t">
             <a
-              href={`/lawfirm/${lang}/cases`}
+              href={buildHref('/cases', lang)}
               className="text-gold-600 hover:text-gold-700"
             >
               ← {lang === 'zh' ? '返回案例列表' : 'Back to Cases'}

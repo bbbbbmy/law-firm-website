@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { PageLayout, HeroBanner } from '@/components/layout'
 import { prisma } from '@/lib/prisma'
+import { buildHref } from '@/lib/url'
 
 // 关于我们依赖数据库，运行时渲染
 export const dynamic = 'force-dynamic'
@@ -155,7 +156,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
           {/* Breadcrumb */}
           <div className="py-4">
             <Link
-              href={`/lawfirm/${lang}`}
+              href={buildHref('/', lang)}
               className="text-gray-500 hover:text-gold-600 transition-colors text-sm"
             >
               ← {langContent.breadcrumb}

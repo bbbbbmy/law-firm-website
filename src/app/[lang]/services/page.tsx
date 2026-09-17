@@ -3,6 +3,7 @@ import { ArticleList, ExpandableSection } from '@/components/blocks'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Language } from '@/types'
+import { buildHref } from '@/lib/url'
 
 // 服务领域页面查询 practiceArea + article，运行时渲染
 export const dynamic = 'force-dynamic'
@@ -65,7 +66,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                     </p>
                     {area.articleSlug && (
                       <Link
-                        href={`/lawfirm/${lang}/cases/${area.articleSlug}`}
+                        href={buildHref(`/cases/${area.articleSlug}`, language)}
                         className="inline-flex items-center text-gold-600 hover:text-gold-700 font-medium"
                       >
                         {language === 'zh' ? '查看相关案例 →' : 'View Related Cases →'}
