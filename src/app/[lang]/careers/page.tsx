@@ -1,6 +1,9 @@
 import { PageLayout, HeroBanner } from '@/components/layout'
 import { prisma } from '@/lib/prisma'
 
+// 招贤纳士依赖数据库查询，需运行时渲染避免 build 期连接 DB
+export const dynamic = 'force-dynamic'
+
 interface CareersPageProps {
   params: Promise<{ lang: string }>
 }
