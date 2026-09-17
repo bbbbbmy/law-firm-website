@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { PageLayout } from '@/components/layout'
 import type { Language } from '@/types'
-import { buildHref } from '@/lib/url'
 
 interface ArticlePageProps {
   params: Promise<{ lang: string; slug: string }>
@@ -80,7 +79,7 @@ export default async function NewsArticlePage({ params }: ArticlePageProps) {
 
           <div className="mt-16 pt-8 border-t">
             <a
-              href={buildHref('/news', lang)}
+              href={`/lawfirm/${lang}/news`}
               className="text-gold-600 hover:text-gold-700"
             >
               ← {lang === 'zh' ? '返回资讯列表' : 'Back to News'}
