@@ -17,11 +17,15 @@ export default async function TeamPage({ params }: TeamPageProps) {
     orderBy: { sortOrder: 'asc' },
   })
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_team' } }))?.value
+    || 'https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920'
+
   return (
     <PageLayout lang={language}>
       <HeroBanner
         title={language === 'zh' ? '专业团队' : 'Our Team'}
-        backgroundImageUrl="https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       <section className="py-16">

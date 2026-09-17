@@ -30,6 +30,10 @@ export default async function NewsPage({ params, searchParams }: NewsPageProps) 
     orderBy: { publishedAt: 'desc' },
   })
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_news' } }))?.value
+    || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920'
+
   const pageTitle = search
     ? (language === 'zh' ? `搜索: "${search}"` : `Search: "${search}"`)
     : (language === 'zh' ? '资讯动态' : 'News')
@@ -38,7 +42,7 @@ export default async function NewsPage({ params, searchParams }: NewsPageProps) 
     <PageLayout lang={language}>
       <HeroBanner
         title={pageTitle}
-        backgroundImageUrl="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       <ArticleList

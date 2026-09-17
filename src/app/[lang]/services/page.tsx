@@ -16,7 +16,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   const language = lang as Language
 
   // Fetch practice areas and case articles from database
-  const [practiceAreas, cases] = await Promise.all([
+  const [practiceAreas, cases, heroCfg] = await Promise.all([
     prisma.practiceArea.findMany({
       orderBy: { sortOrder: 'asc' },
     }),
@@ -25,13 +25,16 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
       orderBy: { publishedAt: 'desc' },
       take: 6,
     }),
+    prisma.siteConfig.findUnique({ where: { key: 'hero_bg_services' } }),
   ])
+
+  const heroBg = heroCfg?.value || 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920'
 
   return (
     <PageLayout lang={language}>
       <HeroBanner
         title={language === 'zh' ? '服务领域' : 'Services'}
-        backgroundImageUrl="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       {/* Practice Areas - Dynamic from database */}

@@ -54,6 +54,11 @@ export default async function HomePage({ params }: HomePageProps) {
     ? (getConfig('homepage_about_content_zh', 'zh') || '我们是一家专业的律师事务所，致力于为客户提供高质量的法律服务。凭借多年的行业经验和专业知识，我们已在众多领域建立了卓越的声誉。')
     : (getConfig('homepage_about_content_en', 'en') || 'We are a professional law firm dedicated to providing high-quality legal services to our clients.')
 
+  // Stats (admin-editable via SiteConfig). Defaults match the previous hardcoded values.
+  const statsYears   = getConfig('stats_years')   || '20+'
+  const statsCases   = getConfig('stats_cases')   || '1000+'
+  const statsLawyers = getConfig('stats_lawyers') || '50+'
+
   return (
     <PageLayout lang={language}>
       {/* Banner Carousel */}
@@ -82,17 +87,17 @@ export default async function HomePage({ params }: HomePageProps) {
               </p>
               <div className="mt-8 flex items-center space-x-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gold-600">20+</div>
+                  <div className="text-3xl font-bold text-gold-600">{statsYears}</div>
                   <div className="text-sm text-navy-500">{language === 'zh' ? '年经验' : 'Years Experience'}</div>
                 </div>
                 <div className="w-px h-12 bg-gray-200" />
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gold-600">1000+</div>
+                  <div className="text-3xl font-bold text-gold-600">{statsCases}</div>
                   <div className="text-sm text-navy-500">{language === 'zh' ? '成功案例' : 'Cases Won'}</div>
                 </div>
                 <div className="w-px h-12 bg-gray-200" />
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gold-600">50+</div>
+                  <div className="text-3xl font-bold text-gold-600">{statsLawyers}</div>
                   <div className="text-sm text-navy-500">{language === 'zh' ? '专业律师' : 'Expert Lawyers'}</div>
                 </div>
               </div>

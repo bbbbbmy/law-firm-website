@@ -32,6 +32,21 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
     email: getConfig('email'),
   })
 
+  // Human-readable label for each hero slot. Used by upload/remove handlers
+  // and the section UI below.
+  function slotLabel(slot: string): string {
+    return {
+      about:    '关于我们',
+      services: '服务领域',
+      contact:  '联系我们',
+      careers:  '招贤纳士',
+      team:     '专业团队',
+      news:     '资讯动态',
+      cases:    '案例展示',
+    }[slot] || slot
+  }
+  const heroSlots = ['about', 'services', 'contact', 'careers', 'team', 'news', 'cases'] as const
+
   // About section state
   const [about, setAbout] = useState({
     imageUrl: getConfig('homepage_about_image_url'),
@@ -40,6 +55,27 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
     contentZh: getConfig('homepage_about_content_zh', 'zh'),
     contentEn: getConfig('homepage_about_content_en', 'en'),
   })
+
+  // Homepage stats (admin-editable numeric values)
+  const [stats, setStats] = useState({
+    years:   getConfig('stats_years')   || '20+',
+    cases:   getConfig('stats_cases')   || '1000+',
+    lawyers: getConfig('stats_lawyers') || '50+',
+  })
+
+  // Hero background images for each public page (admin-editable URLs)
+  const [heroImages, setHeroImages] = useState<Record<string, string>>({
+    about:    getConfig('hero_bg_about')    || '',
+    services: getConfig('hero_bg_services') || '',
+    contact:  getConfig('hero_bg_contact')  || '',
+    careers:  getConfig('hero_bg_careers')  || '',
+    team:     getConfig('hero_bg_team')     || '',
+    news:     getConfig('hero_bg_news')     || '',
+    cases:    getConfig('hero_bg_cases')    || '',
+  })
+
+  // Which hero image slot is currently uploading ('about' | 'services' | ... | null)
+  const [uploadingHero, setUploadingHero] = useState<string | null>(null)
 
   const handleSaveBasicInfo = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,6 +161,92 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
       setMessage('保存失败')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Save the three homepage stats numbers (single batch of 3 PUTs).
+  const handleSaveStats = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    try {
+      for (const [k, v] of [
+        ['stats_years',   stats.years],
+        ['stats_cases',   stats.cases],
+        ['stats_lawyers', stats.lawyers],
+      ] as const) {
+        await fetch(`${clientBasePath()}/api/admin/settings`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key: k, value: v }),
+        })
+      }
+      setMessage('首页数据保存成功')
+      router.refresh()
+    } catch {
+      setMessage('保存失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Upload an image for a hero slot, then auto-save the resulting URL to
+  // SiteConfig. type='banners' so files land in /uploads/banners/.
+  const handleHeroUpload = async (file: File, slot: string) => {
+    const configKey = `hero_bg_${slot}`
+    setUploadingHero(slot)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('type', 'banners')
+
+      const upRes = await fetch(`${clientBasePath()}/api/upload`, {
+        method: 'POST',
+        body: formData,
+      })
+      if (!upRes.ok) {
+        const err = await upRes.json().catch(() => ({}))
+        throw new Error(err.error || '上传失败')
+      }
+      const result = await upRes.json()
+
+      const saveRes = await fetch(`${clientBasePath()}/api/admin/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: configKey, value: result.url }),
+      })
+      if (!saveRes.ok) throw new Error('保存设置失败')
+
+      setHeroImages((prev) => ({ ...prev, [slot]: result.url }))
+      setMessage(`${slotLabel(slot)} 背景图已更新`)
+      router.refresh()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '上传失败')
+    } finally {
+      setUploadingHero(null)
+    }
+  }
+
+  // Remove a hero image (clear the URL in SiteConfig so the page falls back
+  // to its default unsplash image).
+  const handleHeroRemove = async (slot: string) => {
+    if (!confirm(`清除 ${slotLabel(slot)} 的自定义背景图？页面会回到默认占位。`)) return
+    setUploadingHero(slot)
+    try {
+      const res = await fetch(`${clientBasePath()}/api/admin/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: `hero_bg_${slot}`, value: '' }),
+      })
+      if (!res.ok) throw new Error('清除失败')
+      setHeroImages((prev) => ({ ...prev, [slot]: '' }))
+      setMessage(`${slotLabel(slot)} 已恢复默认背景`)
+      router.refresh()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '清除失败')
+    } finally {
+      setUploadingHero(null)
     }
   }
 
@@ -301,6 +423,121 @@ export default function SettingsClient({ configs }: SettingsClientProps) {
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Homepage Stats Section */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">首页数据</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          首页关于我们的 3 个数字统计。可以填 “20+”、“1000+”、“50+” 这种带符号的字符串。
+        </p>
+        <form onSubmit={handleSaveStats} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">年经验</label>
+              <input
+                type="text"
+                value={stats.years}
+                onChange={(e) => setStats({ ...stats, years: e.target.value })}
+                placeholder="20+"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">成功案例</label>
+              <input
+                type="text"
+                value={stats.cases}
+                onChange={(e) => setStats({ ...stats, cases: e.target.value })}
+                placeholder="1000+"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">专业律师</label>
+              <input
+                type="text"
+                value={stats.lawyers}
+                onChange={(e) => setStats({ ...stats, lawyers: e.target.value })}
+                placeholder="50+"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+          </div>
+          <div className="pt-4 border-t">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50"
+            >
+              {loading ? '保存中...' : '保存首页数据'}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Hero Background Images Section */}
+      <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-2">页面头部背景图</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          每个公开页顶部的 banner 背景图。上传后自动保存；点击右上 “恢复默认” 可清掉自定义、回到 unsplash 占位图。
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {heroSlots.map((slot) => (
+            <div key={slot} className="border border-gray-200 rounded-lg overflow-hidden">
+              <div className="px-4 py-2 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+                <div className="font-medium text-gray-900">{slotLabel(slot)}</div>
+                {heroImages[slot] && (
+                  <button
+                    type="button"
+                    onClick={() => handleHeroRemove(slot)}
+                    disabled={uploadingHero === slot}
+                    className="text-xs text-gray-500 hover:text-red-600 disabled:opacity-50"
+                  >
+                    恢复默认
+                  </button>
+                )}
+              </div>
+              <div className="aspect-[16/9] bg-gray-100 relative">
+                {heroImages[slot] ? (
+                  <img
+                    src={heroImages[slot]}
+                    alt={slotLabel(slot)}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                    使用默认占位图
+                  </div>
+                )}
+                {uploadingHero === slot && (
+                  <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-sm text-gray-700">
+                    上传中…
+                  </div>
+                )}
+              </div>
+              <div className="p-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id={`hero-upload-${slot}`}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) handleHeroUpload(file, slot)
+                    e.target.value = ''  // allow re-selecting same file
+                  }}
+                />
+                <label
+                  htmlFor={`hero-upload-${slot}`}
+                  className="block w-full text-center px-3 py-2 border border-gray-300 rounded-md text-sm cursor-pointer hover:bg-gray-50"
+                >
+                  {heroImages[slot] ? '更换图片' : '选择图片'}
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Password Change Section */}

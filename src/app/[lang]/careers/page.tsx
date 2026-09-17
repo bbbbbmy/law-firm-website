@@ -1,4 +1,5 @@
 import { PageLayout, HeroBanner } from '@/components/layout'
+import { prisma } from '@/lib/prisma'
 
 interface CareersPageProps {
   params: Promise<{ lang: string }>
@@ -97,12 +98,16 @@ export default async function CareersPage({ params }: CareersPageProps) {
   const { lang } = await params
   const content = lang === 'zh' ? careersContent.zh : careersContent.en
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_careers' } }))?.value
+    || 'https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920'
+
   return (
     <PageLayout lang={lang as "zh" | "en"}>
       <HeroBanner
 
         title={content.title}
-        backgroundImageUrl="https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       <section className="py-16">

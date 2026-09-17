@@ -15,6 +15,10 @@ export default async function ContactPage({ params }: ContactPageProps) {
     where: { language: lang as 'zh' | 'en' },
   })
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_contact' } }))?.value
+    || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920'
+
   const content = {
     zh: {
       title: '联系我们',
@@ -42,7 +46,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
     <PageLayout lang={lang as 'zh' | 'en'}>
       <HeroBanner
         title={content[lang as 'zh' | 'en'].title}
-        backgroundImageUrl="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       <section className="py-16">

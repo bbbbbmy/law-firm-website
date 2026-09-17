@@ -21,11 +21,15 @@ export default async function CasesPage({ params }: CasesPageProps) {
     orderBy: { publishedAt: 'desc' },
   })
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_cases' } }))?.value
+    || 'https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920'
+
   return (
     <PageLayout lang={language}>
       <HeroBanner
         title={language === 'zh' ? '案例展示' : 'Cases'}
-        backgroundImageUrl="https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       <ArticleList

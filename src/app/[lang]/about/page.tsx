@@ -10,9 +10,9 @@ interface AboutPageProps {
 }
 
 const aboutNavItems = [
-  { key: 'intro', labelZh: '律所简介', labelEn: 'Law Firm Introduction', href: '/about#intro' },
-  { key: 'honors', labelZh: '荣誉资质', labelEn: 'Honors & Qualifications', href: '/about#honors' },
-  { key: 'clients', labelZh: '德善客户', labelEn: 'Esteemed Clients', href: '/about#clients' },
+  { key: 'intro', labelZh: '律所简介', labelEn: 'Law Firm Introduction', href: '#intro' },
+  { key: 'honors', labelZh: '荣誉资质', labelEn: 'Honors & Qualifications', href: '#honors' },
+  { key: 'clients', labelZh: '德善客户', labelEn: 'Esteemed Clients', href: '#clients' },
 ]
 
 // 硬编码 fallback（DB 没数据时用）
@@ -138,11 +138,15 @@ export default async function AboutPage({ params }: AboutPageProps) {
     // DB 读取失败：保持 fallback
   }
 
+  // Hero background (admin-editable via SiteConfig)
+  const heroBg = (await prisma.siteConfig.findUnique({ where: { key: 'hero_bg_about' } }))?.value
+    || 'https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920'
+
   return (
     <PageLayout lang={language as 'zh' | 'en'}>
       <HeroBanner
         title={langContent.title}
-        backgroundImageUrl="https://images.unsplash.com/photo-1521791055396-9459823f0dde?w=1920"
+        backgroundImageUrl={heroBg}
       />
 
       {/* Breadcrumb and Secondary Nav */}
