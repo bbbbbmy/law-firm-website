@@ -36,7 +36,8 @@ ENV NEXT_PUBLIC_BASE_PATH=/lawfirm
 # 站点对外的绝对 URL（含协议、不含路径、不含 :3000 这种开发端口）。NEXT_PUBLIC_* 是
 # 构建期内联进 JS bundle 的，compose 的 environment: 改不了这个值，所以这里硬编码。
 # 想换域名就改这里 + 重新 build 镜像。
-ENV NEXT_PUBLIC_SITE_URL=http://120.26.244.170:3000
+# 部署：新服务器 8.133.204.5 + 域名 www.deshanyiyi.com（之前是 http://120.26.244.170:3000）
+ENV NEXT_PUBLIC_SITE_URL=https://www.deshanyiyi.com
 # 放开 Node 内存限制（GitHub runner 偶发 build 超 2GB）
 ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build
