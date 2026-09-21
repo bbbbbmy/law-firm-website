@@ -35,7 +35,7 @@ RUN npx prisma generate
 ENV NEXT_PUBLIC_BASE_PATH=/lawfirm
 # 站点对外的绝对 URL（含协议、不含路径、不含 :3000 这种开发端口）。NEXT_PUBLIC_* 是
 # 构建期内联进 JS bundle 的，compose 的 environment: 改不了这个值，所以这里硬编码。
-# 想换域名就改这里 + 重新 build 镜像。
+# cache-bust 20260921-0847
 # 部署：新服务器 8.133.204.5 + 域名 www.deshanyiyi.com。先用 http（HTTPS 没准备好之前），
 # 复制链接要跟这个一致才能跑得通。
 ENV NEXT_PUBLIC_SITE_URL=http://www.deshanyiyi.com
