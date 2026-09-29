@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 // SEO 元数据。所有 [lang]/* 页面继承。Next.js 会自动加 basePath /lawfirm。
-const SITE_URL = 'http://www.deshanxinyi.com'
+const SITE_URL = 'https://www.deshanxinyi.com'
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params

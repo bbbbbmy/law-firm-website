@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 3600  // 每小时重新生成一次
 
 // 网站对外的绝对 URL（跟 docker/frontend.Dockerfile 里 NEXT_PUBLIC_SITE_URL 一致）
-const SITE_URL = 'http://www.deshanxinyi.com'
+const SITE_URL = 'https://www.deshanxinyi.com'
 
 // 首页/核心页面：zh + en 两个语言版本
 const STATIC_PAGES = [

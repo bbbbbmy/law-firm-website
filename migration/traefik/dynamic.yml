@@ -1,0 +1,59 @@
+# =============================================================================
+# traefik dynamic config — HTTP + HTTPS
+#   HTTP 80：精确匹配 www.deshanxinyi.com，正常反代
+#   HTTP 80：兜底匹配 /lawfirm/*（让 IP 直连也能用）
+#   HTTP 80：deshanxinyi.com 裸域 / www 根路径 → 302 → www.../lawfirm/zh
+#   HTTPS 443：www.deshanxinyi.com → 走 ACME cert + 反代
+# =============================================================================
+
+http:
+  routers:
+    deshan-root-redirect:
+      rule: "Host(`deshanxinyi.com`)"
+      entryPoints: [http]
+      middlewares: [deshan-to-www-zh]
+      service: lawfirm-noop
+      priority: 200
+    www-root-redirect:
+      rule: "Host(`www.deshanxinyi.com`) && Path(`/`)"
+      entryPoints: [http]
+      middlewares: [redirect-to-zh]
+      service: lawfirm-noop
+      priority: 100
+    lawfirm-http-www:
+      rule: "Host(`www.deshanxinyi.com`)"
+      entryPoints: [http]
+      service: lawfirm-svc
+      priority: 50
+    lawfirm-https-www:
+      rule: "Host(`www.deshanxinyi.com`)"
+      entryPoints: [https]
+      service: lawfirm-svc
+      tls:
+        certResolver: letsencrypt
+      priority: 50
+    lawfirm-fallback:
+      rule: "PathPrefix(`/lawfirm`)"
+      entryPoints: [http]
+      service: lawfirm-svc
+      priority: 1
+  middlewares:
+    deshan-to-www-zh:
+      redirectRegex:
+        regex: "^https?://deshanxinyi.com.*"
+        replacement: "https://www.deshanxinyi.com/lawfirm/zh"
+        permanent: false
+    redirect-to-zh:
+      redirectRegex:
+        regex: "^https?://.*$"
+        replacement: "https://www.deshanxinyi.com/lawfirm/zh"
+        permanent: false
+  services:
+    lawfirm-svc:
+      loadBalancer:
+        servers:
+          - url: "http://lawfirm-frontend:3000"
+    lawfirm-noop:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1:1"

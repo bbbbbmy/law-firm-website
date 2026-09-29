@@ -1,0 +1,159 @@
+# =============================================================================
+# law-firm-website :: 新服务器 8.133.204.5 部署
+# 架构：
+#   postgres     → 自包含（不再依赖外部 pgsql-pgsql-1）
+#   frontend     → :3000 内网，traefik 反代到 80/443
+#   backend      → :3001 内网，预留
+#   traefik      → :80/:443，Let's Encrypt HTTP-01 给 www.deshanxinyi.com
+#
+# 跟老服务器差异：
+#   - 自包含 postgres
+#   - 多了 traefik 服务
+#   - DATABASE_URL host: pgsql-pgsql-1 → lawfirm-postgres
+#   - 不再 external: true 那个 pgsql_default 网络
+#
+# 启动顺序：postgres healthy → frontend + backend + traefik
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:17.1-alpine
+    container_name: lawfirm-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: lawfirm_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lawfirm_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - lawfirm_net
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    image: ghcr.io/bbbbbmy/lawfirm-frontend:${IMAGE_TAG}
+    container_name: lawfirm-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - /opt/law-firm/.env.production:/app/.env:ro
+      - /opt/law-firm/uploads:/app/public/uploads
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_BASE_PATH: ""
+      DATABASE_URL: "postgresql://lawfirm:${LAWFIRM_DB_PASSWORD}@lawfirm-postgres:5432/lawfirm_db?schema=public"
+      SESSION_SECRET: "${SESSION_SECRET}"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      NEXT_PUBLIC_SITE_URL: "${NEXT_PUBLIC_SITE_URL}"
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lawfirm_net
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    image: ghcr.io/bbbbbmy/lawfirm-backend:${IMAGE_TAG}
+    container_name: lawfirm-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - /opt/law-firm/.env.backend:/app/.env:ro
+      - /opt/law-firm/uploads:/app/public/uploads
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_MODE: backend
+      DATABASE_URL: "postgresql://lawfirm:${LAWFIRM_DB_PASSWORD}@lawfirm-postgres:5432/lawfirm_db?schema=public"
+      SESSION_SECRET: "${SESSION_SECRET}"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lawfirm_net
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  traefik:
+    image: traefik:v3.6.17
+    container_name: lawfirm-traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    command:
+      - "--global.checkNewVersion=false"
+      - "--global.sendAnonymousUsage=false"
+      - "--ping=true"
+      - "--log.level=info"
+      - "--log.format=common"
+      - "--entryPoints.http.address=:80"
+      - "--entryPoints.http.http.redirections.entryPoint.to=https"
+      - "--entryPoints.http.http.redirections.entryPoint.scheme=https"
+      - "--entryPoints.https.address=:443"
+      - "--entryPoints.https.http.tls=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=lawfirm_net"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+    environment:
+      - ALICLOUD_ACCESS_KEY=${ALICLOUD_ACCESS_KEY}
+      - ALICLOUD_SECRET_KEY=${ALICLOUD_SECRET_KEY}
+      - ALICLOUD_REGION=cn-shanghai
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-acme:/acme
+      - /opt/law-firm/traefik:/etc/traefik/dynamic:ro
+    depends_on:
+      - frontend
+    networks:
+      - lawfirm_net
+
+volumes:
+  postgres_data:
+    name: lawfirm-postgres-data
+  traefik-acme:
+    name: lawfirm-traefik-acme
+
+networks:
+  lawfirm_net:
+    name: lawfirm_net
+    driver: bridge
