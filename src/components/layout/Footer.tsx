@@ -13,6 +13,8 @@ interface FooterProps {
     email?: string
   }
   copyright?: string
+  // 阿里云要求：底部正中央显示 ICP 备案号，链接到 https://beian.miit.gov.cn/
+  // 默认写死用户从阿里云拿到的号（苏ICP备2026073054号-1）。如果传了 prop 就用 prop。
   icpNumber?: string
 }
 
@@ -23,7 +25,7 @@ export default function Footer({
   qrCodeUrl,
   contactInfo = {},
   copyright,
-  icpNumber,
+  icpNumber = '苏ICP备2026073054号-1',
 }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
@@ -125,23 +127,21 @@ export default function Footer({
           </div>
         </div>
 
-        {/* Bottom: Copyright */}
-        <div className="mt-12 pt-8 border-t border-navy-800">
-          <div className="flex flex-col md:flex-row justify-between items-center text-navy-400 text-sm">
-            <p>
-              {copyright || `© ${currentYear} ${firmName}. All rights reserved.`}
-            </p>
-            {icpNumber && (
-              <a
-                href="https://beian.miit.gov.cn/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-gold-400 transition-colors mt-2 md:mt-0"
-              >
-                {icpNumber}
-              </a>
-            )}
-          </div>
+        {/* Bottom: Copyright + ICP（按阿里云要求底部正中央，ICP 链接到 beian.miit.gov.cn） */}
+        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col items-center gap-2 text-navy-400 text-sm">
+          <p>
+            {copyright || `© ${currentYear} ${firmName}. All rights reserved.`}
+          </p>
+          {icpNumber && (
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold-400 transition-colors"
+            >
+              {icpNumber}
+            </a>
+          )}
         </div>
       </div>
     </footer>
