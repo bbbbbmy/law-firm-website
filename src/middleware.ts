@@ -32,8 +32,30 @@ export async function middleware(request: NextRequest) {
     path.startsWith('/lawfirm/admin/login') ||
     path.startsWith('/lawfirm/_next') ||
     path.startsWith('/lawfirm/uploads') ||
-    path.startsWith('/lawfirm/api')
+    // /api/admin/auth 本身是登录/登出/session 检测，不需要 auth 本身
+    path === '/lawfirm/api/admin/auth' ||
+    path === '/lawfirm/api/admin/auth/session' ||
+    path === '/lawfirm/api/admin/auth/logout' ||
+    // /api/upload /api/contact /api/health 都是公开 API
+    path.startsWith('/lawfirm/api/upload') ||
+    path.startsWith('/lawfirm/api/contact') ||
+    path.startsWith('/lawfirm/api/health')
   ) {
+    return NextResponse.next()
+  }
+
+  // /api/admin/* （登录/登出除外）也要 session 验证 — 否则 PII 泄漏
+  if (path.startsWith('/lawfirm/api/admin')) {
+    const sessionCookie = request.cookies.get('law-firm-admin-session')
+    const session: AdminSession | null = sessionCookie
+      ? await decryptSession(sessionCookie.value)
+      : null
+    if (!session?.isLoggedIn) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
     return NextResponse.next()
   }
 
