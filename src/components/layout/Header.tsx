@@ -10,9 +10,13 @@ interface HeaderProps {
   lang: Language
   logoUrl?: string
   firmName?: string
+  // 公司 logo 下的小黄字（如 "LAW FIRM" 或 "律师事务所"）。默认根据 lang 给双语 fallback。
+  firmTagline?: string
 }
 
-export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)律师事务所' }: HeaderProps) {
+export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)律师事务所', firmTagline }: HeaderProps) {
+  // firmTagline 默认根据 lang 给双语 fallback
+  const tagline = firmTagline ?? (lang === 'zh' ? '律师事务所' : 'LAW FIRM')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -51,7 +55,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
             )}
             <div className="hidden sm:block">
               <span className="text-white font-semibold text-lg tracking-wide">{firmName}</span>
-              <span className="block text-gold-400 text-xs tracking-widest uppercase">Law Firm</span>
+              <span className="block text-gold-400 text-xs tracking-widest uppercase">{tagline}</span>
             </div>
           </Link>
 

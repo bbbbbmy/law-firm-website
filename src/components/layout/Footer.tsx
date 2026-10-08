@@ -6,6 +6,8 @@ interface FooterProps {
   lang: Language
   logoUrl?: string
   firmName?: string
+  // 公司 logo 下的小黄字（如 "LAW FIRM" 或 "律师事务所"）。默认根据 lang 给双语 fallback。
+  firmTagline?: string
   qrCodeUrl?: string
   contactInfo?: {
     address?: string
@@ -25,12 +27,15 @@ export default function Footer({
   lang,
   logoUrl,
   firmName = '江苏德善(新沂)律师事务所',
+  firmTagline,
   qrCodeUrl,
   contactInfo = {},
   copyright,
   icpNumber = '苏ICP备2026073054号-1',
   mpsNumber = '苏公网安备32038102020182号',
 }: FooterProps) {
+  // firmTagline 默认根据 lang 给双语 fallback
+  const tagline = firmTagline ?? (lang === 'zh' ? '律师事务所' : 'LAW FIRM')
   const currentYear = new Date().getFullYear()
 
   return (
@@ -54,7 +59,7 @@ export default function Footer({
               )}
               <div>
                 <span className="font-semibold text-xl text-white">{firmName}</span>
-                <span className="block text-gold-400 text-xs tracking-widest uppercase">Law Firm</span>
+                <span className="block text-gold-400 text-xs tracking-widest uppercase">{tagline}</span>
               </div>
             </Link>
             <p className="text-navy-300 leading-relaxed max-w-md">
