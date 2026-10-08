@@ -16,6 +16,9 @@ interface FooterProps {
   // 阿里云要求：底部正中央显示 ICP 备案号，链接到 https://beian.miit.gov.cn/
   // 默认写死用户从阿里云拿到的号（苏ICP备2026073054号-1）。如果传了 prop 就用 prop。
   icpNumber?: string
+  // 公安部要求：显示公安备案号，链接到 https://beian.mps.gov.cn/
+  // 默认值：苏公网安备32038102020182号（用户从新沂市网安大队拿到的）。如果传 prop 就用 prop。
+  mpsNumber?: string
 }
 
 export default function Footer({
@@ -26,6 +29,7 @@ export default function Footer({
   contactInfo = {},
   copyright,
   icpNumber = '苏ICP备2026073054号-1',
+  mpsNumber = '苏公网安备32038102020182号',
 }: FooterProps) {
   const currentYear = new Date().getFullYear()
 
@@ -127,8 +131,8 @@ export default function Footer({
           </div>
         </div>
 
-        {/* Bottom: Copyright + ICP（按阿里云要求底部正中央，ICP 链接到 beian.miit.gov.cn） */}
-        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col items-center gap-2 text-navy-400 text-sm">
+        {/* Bottom: Copyright + ICP（工信部）+ 公安备案（公安部）— 都放底部正中央 */}
+        <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col items-center gap-1 text-navy-400 text-sm">
           <p>
             {copyright || `© ${currentYear} ${firmName}. All rights reserved.`}
           </p>
@@ -140,6 +144,16 @@ export default function Footer({
               className="hover:text-gold-400 transition-colors"
             >
               {icpNumber}
+            </a>
+          )}
+          {mpsNumber && (
+            <a
+              href="https://beian.mps.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gold-400 transition-colors"
+            >
+              {mpsNumber}
             </a>
           )}
         </div>
