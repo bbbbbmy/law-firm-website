@@ -17,8 +17,10 @@ export async function middleware(request: NextRequest) {
   // 根 URL rewrite 到 /lawfirm/zh，让根 URL 渲染含 verification meta 的页面
   // baidu/bing 等 HTML meta 验证工具访问根 URL 就能拿到 meta，无需跟随 redirect
   if (path === '/lawfirm' || path === '/lawfirm/' || path === '/' || path === '') {
+    // 用 /zh 而非 /lawfirm/zh,否则 Next.js 14 会把 basePath 重复叠加
+    // (设置 url.pathname = '/lawfirm/zh' 在有 basePath 的请求里会变成 /lawfirm/lawfirm/zh)
     const url = request.nextUrl.clone()
-    url.pathname = '/lawfirm/zh'
+    url.pathname = '/zh'
     return NextResponse.rewrite(url)
   }
 
