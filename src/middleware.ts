@@ -14,6 +14,14 @@ function rawPathname(request: NextRequest): string {
 export async function middleware(request: NextRequest) {
   const path = rawPathname(request)
 
+  // 根 URL rewrite 到 /lawfirm/zh，让根 URL 渲染含 verification meta 的页面
+  // baidu/bing 等 HTML meta 验证工具访问根 URL 就能拿到 meta，无需跟随 redirect
+  if (path === '/lawfirm' || path === '/lawfirm/' || path === '/' || path === '') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/lawfirm/zh'
+    return NextResponse.rewrite(url)
+  }
+
   // 兜底重定向：如果用户输错路径（漏了 /lawfirm 前缀），自动跳到带 basePath 的版本。
   // 例：/zh/team → /lawfirm/zh/team
   //     /admin/login → /lawfirm/admin/login
