@@ -38,13 +38,16 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     creator: '江苏德善(新沂)律师事务所',
     publisher: '江苏德善(新沂)律师事务所',
     formatDetection: { telephone: false, address: false, email: false },
-    // Bing Webmaster 验证：https://www.bing.com/webmasters
-    // 百度搜索资源平台验证：https://ziyuan.baidu.com/
-    // 多个 meta 不冲突——每个搜索引擎只看自己的 tag
-    // meta 需在 <head> 里，Next.js App Router 用 `other` 字段会自动渲染为 <meta name="..." content="..."/>
+    // 搜索引擎验证 meta tag（全部都在 <head> 里，互不冲突）：
+    // - Bing Webmaster: https://www.bing.com/webmasters
+    // - 百度搜索资源平台: https://ziyuan.baidu.com/
+    // - 360 站长平台: https://zhanzhang.so.com/
+    // - 搜狗站长平台: https://zhanzhang.sogou.com/
     other: {
       'msvalidate.01': 'A8DF2D84B5E8F3A4C567534AF972FF33',
       'baidu-site-verification': 'codeva-m0eVVSmqA5',
+      '360-site-verification': 'c3710f1db20ec6ca15db35d7749d4442',
+      'sogou_site_verification': 'BV4xVAo1mz',
     },
     openGraph: {
       type: 'website',
