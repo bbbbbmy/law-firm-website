@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/admin/'], // 后台和 admin API 别让爬虫进
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${SITE_URL}/lawfirm/sitemap.xml`,
     host: SITE_URL,
   }
 }

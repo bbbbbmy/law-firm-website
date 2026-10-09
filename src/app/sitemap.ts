@@ -10,23 +10,25 @@ const SITE_URL = 'https://www.deshanxinyi.com'
 
 // 首页/核心页面：zh + en 两个语言版本
 const STATIC_PAGES = [
-  '',         // /lawfirm 重定向到 /lawfirm/zh
-  '/zh',
-  '/en',
-  '/zh/about',
-  '/en/about',
-  '/zh/services',
-  '/en/services',
-  '/zh/team',
-  '/en/team',
-  '/zh/news',
-  '/en/news',
-  '/zh/cases',
-  '/en/cases',
-  '/zh/contact',
-  '/en/contact',
-  '/zh/careers',
-  '/en/careers',
+  // 路径必须带 basePath (/lawfirm),Next.js 不会自动给 sitemap 加 basePath
+  // (basePath 只影响 <a>/router.push() 等, sitemap 这种 URL 元数据要手动加)
+  "/lawfirm",
+  "/lawfirm/zh",
+  "/lawfirm/en",
+  "/lawfirm/zh/about",
+  "/lawfirm/en/about",
+  "/lawfirm/zh/services",
+  "/lawfirm/en/services",
+  "/lawfirm/zh/team",
+  "/lawfirm/en/team",
+  "/lawfirm/zh/news",
+  "/lawfirm/en/news",
+  "/lawfirm/zh/cases",
+  "/lawfirm/en/cases",
+  "/lawfirm/zh/contact",
+  "/lawfirm/en/contact",
+  "/lawfirm/zh/careers",
+  "/lawfirm/en/careers",
 ]
 
 // Sitemap 频率提示（百度/Google 都参考）
@@ -53,13 +55,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const teamEntries: MetadataRoute.Sitemap = team.flatMap((m) => ([
     {
-      url: `${SITE_URL}/zh/team/${m.id}`,
+      url: `${SITE_URL}/lawfirm/zh/team/${m.id}`,
       lastModified: m.updatedAt,
       changeFrequency: DYNAMIC_CHANGEFREQ,
       priority: 0.6,
     },
     {
-      url: `${SITE_URL}/en/team/${m.id}`,
+      url: `${SITE_URL}/lawfirm/en/team/${m.id}`,
       lastModified: m.updatedAt,
       changeFrequency: DYNAMIC_CHANGEFREQ,
       priority: 0.6,
@@ -68,13 +70,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const articleEntries: MetadataRoute.Sitemap = articles.flatMap((a) => ([
     {
-      url: `${SITE_URL}/zh/${a.type === 'news' ? 'news' : 'cases'}/${a.slug}`,
+      url: `${SITE_URL}/lawfirm/zh/${a.type === 'news' ? 'news' : 'cases'}/${a.slug}`,
       lastModified: a.updatedAt,
       changeFrequency: DYNAMIC_CHANGEFREQ,
       priority: 0.7,
     },
     {
-      url: `${SITE_URL}/en/${a.type === 'news' ? 'news' : 'cases'}/${a.slug}`,
+      url: `${SITE_URL}/lawfirm/en/${a.type === 'news' ? 'news' : 'cases'}/${a.slug}`,
       lastModified: a.updatedAt,
       changeFrequency: DYNAMIC_CHANGEFREQ,
       priority: 0.7,

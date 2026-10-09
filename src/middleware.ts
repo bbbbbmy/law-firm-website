@@ -89,5 +89,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
+  // matcher 数组:同时匹配 / 和 /foo/* (默认的 /((?!...).*)/ 在 path-to-regexp 下不匹配纯 /)
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)', '/'],
 }

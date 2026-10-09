@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     openGraph: {
       type: 'website',
       locale: isZh ? 'zh_CN' : 'en_US',
-      url: `${SITE_URL}/${lang}`,
+      url: `${SITE_URL}/lawfirm/${lang}`,
       siteName: isZh ? '德善新沂律师事务所' : 'De Shan Xin Yi Law Firm',
       title: isZh ? '德善新沂律师事务所 - 江苏德善(新沂)律师事务所' : 'De Shan Xin Yi Law Firm',
       description: isZh
@@ -60,10 +60,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         : 'Professional legal services in Xinyi, Jiangsu.',
     },
     alternates: {
-      canonical: `${SITE_URL}/${lang}`,
+      canonical: `${SITE_URL}/lawfirm/${lang}`,
       languages: {
-        'zh': `${SITE_URL}/zh`,
-        'en': `${SITE_URL}/en`,
+        'zh': `${SITE_URL}/lawfirm/zh`,
+        'en': `${SITE_URL}/lawfirm/en`,
       },
     },
     robots: {
