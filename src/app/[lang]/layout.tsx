@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     // meta 需在 <head> 里，Next.js App Router 用 `other` 字段会自动渲染为 <meta name="..." content="..."/>
     other: {
       'msvalidate.01': 'A8DF2D84B5E8F3A4C567534AF972FF33',
-      'baidu-site-verification': 'codeva-m0eVVSrngAS5',
+      'baidu-site-verification': 'codeva-m0eVVSmqA5',
     },
     openGraph: {
       type: 'website',
