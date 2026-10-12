@@ -17,7 +17,8 @@
  *   publicUrl('https://h/', '/x.jpg')  → 'https://h/x.jpg'
  *   publicUrl('https://h', 'https://a/b') → 'https://a/b'
  *   publicUrl('https://h/lawfirm', '/lawfirm/uploads/x.jpg')
- *                                       → 'https://h/lawfirm/uploads/x.jpg'
+ *                                       → 'https://h/lawfirm/lawfirm/uploads/x.jpg'
+ *                                       // caller's responsibility: 不要传带 basePath 前缀的 url
  *   publicUrl('https://h', '/lawfirm/uploads/x.jpg')
  *                                       → 'https://h/lawfirm/uploads/x.jpg'
  */
@@ -29,12 +30,6 @@ export function publicUrl(baseUrl: string, url: string): string {
   // Strip trailing slashes from base (but keep "" if base is "").
   const base = baseUrl.replace(/\/+$/, '')
 
-  // If both base ends with /lawfirm AND url starts with /lawfirm,
-  // drop the redundant prefix from url.
-  const basePath = '/lawfirm'
-  if (base.endsWith(basePath) && url.startsWith(basePath)) {
-    return base + url.slice(basePath.length)
-  }
 
   // Normalize: if url doesn't start with /, prefix one (so we never
   // produce 'hostupload' when caller forgot the slash).

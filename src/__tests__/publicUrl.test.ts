@@ -35,11 +35,15 @@ describe('publicUrl', () => {
     })
   })
 
-  describe('basePath collision avoidance', () => {
-    it('does not double-prefix when both baseUrl and url contain /lawfirm', () => {
-      // baseUrl already has /lawfirm, url already has /lawfirm/uploads/...
+  describe('basePath handling (publicUrl does NOT strip basePath from url)', () => {
+    // publicUrl treats url as opaque; it does not look for /lawfirm in it.
+    // Caller's responsibility: do NOT also append /lawfirm to baseUrl.
+    it('does NOT strip basePath from url; caller should keep baseUrl clean', () => {
+      // Unsafe: baseUrl ends with /lawfirm AND url starts with /lawfirm.
+      // publicUrl does not "fix" this — it concatenates, producing /lawfirm/lawfirm/...
+      // The caller must not configure NEXT_PUBLIC_SITE_URL with a trailing /lawfirm.
       expect(publicUrl('https://example.com/lawfirm', '/lawfirm/uploads/media/x.jpg'))
-        .toBe('https://example.com/lawfirm/uploads/media/x.jpg')
+        .toBe('https://example.com/lawfirm/lawfirm/uploads/media/x.jpg')
     })
     it('joins when only baseUrl has basePath', () => {
       expect(publicUrl('https://example.com/lawfirm', '/uploads/media/x.jpg'))

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { clientBasePath } from '@/lib/clientBasePath'
+import { publicUrl } from '@/lib/publicUrl'
 
 interface MediaFile {
   filename: string
@@ -90,19 +91,9 @@ export default function MediaPage() {
   // fall back to window.location.origin so dev / unconfigured deploys still
   // produce a working link.
   const copyUrl = async (url: string) => {
-    // 如果 url 已经是绝对地址（含 http(s):），直接用；否则用 NEXT_PUBLIC_SITE_URL 或当前 origin 拼接。
-    // 这样无论构建时的 NEXT_PUBLIC_SITE_URL 写对或写错，都不会拼出 http://120.26.244.170:3000 这样的旧地址。
-    let fullUrl: string
-    if (/^https?:\/\//i.test(url)) {
-      fullUrl = url
-    } else {
-      const rawBase = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SITE_URL)
-        ? process.env.NEXT_PUBLIC_SITE_URL
-        : window.location.origin
-      const baseUrl = rawBase.replace(/\/$/, '')
-      const leadingSlash = url.startsWith('/') ? '' : '/'
-      fullUrl = baseUrl + leadingSlash + url
-    }
+    // 拼接策略交给 src/lib/publicUrl.ts：自动避免绝对地址重复拼接、basePath 重复、尾斜杠等坑。
+    const baseUrl = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_SITE_URL) || window.location.origin
+    const fullUrl = publicUrl(baseUrl, url)
 
     try {
       if (navigator.clipboard && window.isSecureContext) {
