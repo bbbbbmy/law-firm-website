@@ -96,9 +96,6 @@ export default function Footer({
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-gold-400 font-semibold text-sm tracking-wider uppercase mb-6">
-              {lang === 'zh' ? '联系我们' : 'Contact Us'}
-            </h3>
             <ul className="space-y-4">
               {contactInfo.address && (
                 <li className="flex items-start space-x-3">
