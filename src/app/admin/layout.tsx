@@ -61,6 +61,7 @@ export default async function AdminLayout({
               <SidebarLink href="/admin/contact" icon="📞" label="联系我们" />
               <SidebarLink href="/admin/media" icon="📁" label="媒体库" />
               <SidebarLink href="/admin/pages/about" icon="📄" label="关于页面" />
+              <SidebarLink href="/admin/pages/careers" icon="🤝" label="加入我们页面" />
               <SidebarLink href="/admin/settings" icon="⚙️" label="网站设置" />
             </nav>
           </aside>

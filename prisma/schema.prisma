@@ -135,6 +135,68 @@ model Client {
   @@map("clients")
 }
 
+/// 「加入我们」页面文案，按语言分行。banner/各板块文案都存这里，
+/// cards 和 jobs 走关联表。默认值见 src/lib/careersContent.ts。
+model CareersContent {
+  id        String   @id @default(cuid())
+  language  Language @unique
+  bannerTitle     String
+  bannerSubtitle  String
+  bannerQuote     String
+  introTitle      String
+  introContent    String
+  environmentTitle      String
+  environmentLabel      String
+  environmentContent    String
+  environmentImageUrl   String?
+  supportTitle    String
+  supportLabel    String
+  supportLead     String
+  creationTitle   String
+  creationLabel   String
+  creationContent String
+  invitationTitle   String
+  invitationLabel   String
+  invitationContent String
+  jobsTitle      String
+  contactTitle   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cards    CareersCard[]
+  jobs     CareersJob[]
+
+  @@map("careers_contents")
+}
+
+/// 板块 2「重磅扶持」的 3 张卡片（10% 点位 / 全包成本 / 轻管理）
+model CareersCard {
+  id          String          @id @default(cuid())
+  careersId   String
+  title       String
+  content     String
+  sortOrder   Int             @default(0)
+  careers     CareersContent  @relation(fields: [careersId], references: [id], onDelete: Cascade)
+
+  @@unique([careersId, sortOrder])
+  @@map("careers_cards")
+}
+
+/// 板块 5「热招岗位」的岗位卡片
+model CareersJob {
+  id           String          @id @default(cuid())
+  careersId    String
+  title        String
+  tags         String
+  requirements String
+  duties       String          @default("")
+  photoUrl     String?
+  sortOrder    Int             @default(0)
+  careers      CareersContent  @relation(fields: [careersId], references: [id], onDelete: Cascade)
+
+  @@unique([careersId, sortOrder])
+  @@map("careers_jobs")
+}
+
 model ContactInfo {
   id        String   @id @default(cuid())
   language  Language @default(zh)

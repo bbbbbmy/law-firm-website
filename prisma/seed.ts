@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
+import { DEFAULT_CARDS, DEFAULT_CONTENT, DEFAULT_JOBS } from '../src/lib/careersContent'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const adapter = new PrismaPg(pool)
@@ -190,6 +191,47 @@ async function main() {
     })
   }
   console.log('Created articles:', articles.length)
+
+  // 「加入我们」页面文案。已存在则跳过（不覆盖后台已编辑的内容）。
+  const careersLangs = ['zh', 'en'] as const
+  for (const language of careersLangs) {
+    const c = DEFAULT_CONTENT[language]
+    const cards = DEFAULT_CARDS[language]
+    const jobs = DEFAULT_JOBS[language]
+    const existing = await prisma.careersContent.findUnique({ where: { language } })
+    if (existing) {
+      console.log(`Careers content (${language}) already exists, skipped`)
+      continue
+    }
+    await prisma.careersContent.create({
+      data: {
+        language,
+        bannerTitle: c.bannerTitle,
+        bannerSubtitle: c.bannerSubtitle,
+        bannerQuote: c.bannerQuote,
+        introTitle: c.introTitle,
+        introContent: c.introContent,
+        environmentTitle: c.environmentTitle,
+        environmentLabel: c.environmentLabel,
+        environmentContent: c.environmentContent,
+        environmentImageUrl: c.environmentImageUrl,
+        supportTitle: c.supportTitle,
+        supportLabel: c.supportLabel,
+        supportLead: c.supportLead,
+        creationTitle: c.creationTitle,
+        creationLabel: c.creationLabel,
+        creationContent: c.creationContent,
+        invitationTitle: c.invitationTitle,
+        invitationLabel: c.invitationLabel,
+        invitationContent: c.invitationContent,
+        jobsTitle: c.jobsTitle,
+        contactTitle: c.contactTitle,
+        cards: { create: cards },
+        jobs: { create: jobs },
+      },
+    })
+  }
+  console.log('Seeded careers content: zh, en')
 
   console.log('Seed completed!')
 }
