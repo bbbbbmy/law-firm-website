@@ -77,10 +77,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ${{ env.FRONTEND_IMAGE }}
-            ${{ env.BACKEND_IMAGE }}
-          # 只对当前 matrix 里那个 image 输出 tag
+          # Each matrix job owns only its own image tag. Publishing both tags
+          # from both jobs races and can overwrite frontend with backend (or vice versa).
+          images: ${{ matrix.image == 'frontend' && env.FRONTEND_IMAGE || env.BACKEND_IMAGE }}
           flavor: |
             latest=${{ matrix.image == 'frontend' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || inputs.push_latest == 'true') && 'true' || 'false' }}
           tags: |
