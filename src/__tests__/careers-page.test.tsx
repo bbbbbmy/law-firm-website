@@ -117,7 +117,7 @@ describe('CareersPage (DB empty -> default copy)', () => {
     const links = screen.getAllByText('立即咨询')
     expect(links).toHaveLength(4)
     for (const link of links) {
-      expect(link.getAttribute('href')).toContain('/zh/contact')
+      expect(link.getAttribute('href')).toBe('/lawfirm/zh/contact')
     }
   })
 
@@ -134,7 +134,7 @@ describe('CareersPage (DB empty -> default copy)', () => {
   it('points the English enquiry buttons at the English contact page', async () => {
     await renderPage('en')
     for (const link of screen.getAllByText('Enquire Now')) {
-      expect(link.getAttribute('href')).toContain('/en/contact')
+      expect(link.getAttribute('href')).toBe('/lawfirm/en/contact')
     }
   })
 })

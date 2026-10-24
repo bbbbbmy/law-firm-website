@@ -195,7 +195,7 @@ export default async function CareersPage({ params }: CareersPageProps) {
         jobs={jobs}
         ctaLabel={labels.ctaLabel}
         dutiesLabel={labels.dutiesLabel}
-        contactHref={`${buildHref('/contact', language)}#contact`}
+        contactHref={`/lawfirm${buildHref('/contact', language)}`}
       />
 
       {/* 八、底部联系信息 */}
