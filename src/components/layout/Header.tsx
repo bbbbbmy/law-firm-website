@@ -61,7 +61,7 @@ export default function Header({ lang, logoUrl, firmName = '江苏德善(新沂)
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
-            {NAV_ITEMS.slice(0, 6).map((item) => (
+            {NAV_ITEMS.slice(0, 7).map((item) => (
               <Link
                 key={item.href}
                 href={buildHref(item.href, lang)}

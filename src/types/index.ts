@@ -88,6 +88,6 @@ export const NAV_ITEMS: NavigationItem[] = [
   { label: '专业团队', labelEn: 'Team', href: '/team' },
   { label: '资讯动态', labelEn: 'News', href: '/news' },
   { label: '案例展示', labelEn: 'Cases', href: '/cases' },
-  { label: '人才招聘', labelEn: 'Careers', href: '/careers' },
+  { label: '加入我们', labelEn: 'Join Us', href: '/careers' },
   { label: '联系我们', labelEn: 'Contact', href: '/contact' },
 ]
